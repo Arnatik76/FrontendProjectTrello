@@ -1,5 +1,4 @@
 import React from 'react';
-// import './Task.css';
 
 function Task({ content }) {
   return (
