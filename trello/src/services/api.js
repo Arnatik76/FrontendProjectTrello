@@ -1,155 +1,150 @@
 import axios from "axios";
-import mockApi from "./mockApi";
 
-// Flag to determine if we should use mock API or real API
-const USE_MOCK_API = false;
-
-// Create axios instance for real API
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080", // Replace with actual API URL
+  baseURL: "http://localhost:8080",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// API methods that will use either mock API or real API
+const handleApiError = (error) => {
+  const message = error.response?.data?.message || error.message || 'Something went wrong';
+  const status = error.response?.status || 500;
+  console.error(`API Error (${status}): ${message}`, error);
+  throw { message, status, error };
+};
+
 const api = {
-  // Board operations
+
+  // Boards
   getBoards: async () => {
-    if (USE_MOCK_API) {
-      return mockApi.getBoards();
+    try {
+      const response = await apiClient.get("/boards");
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.get("/boards");
-    return response.data;
   },
   
   getBoard: async (id) => {
-    if (USE_MOCK_API) {
-      return mockApi.getBoard(id);
+    try {
+      const response = await apiClient.get(`/boards/${id}`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.get(`/boards/${id}`);
-    return response.data;
   },
   
   createBoard: async (boardData) => {
-    if (USE_MOCK_API) {
-      return mockApi.createBoard(boardData);
+    try {
+      const response = await apiClient.post("/boards", boardData);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.post("/boards", boardData);
-    return response.data;
   },
   
   updateBoard: async (id, boardData) => {
-    if (USE_MOCK_API) {
-      return mockApi.updateBoard(id, boardData);
+    try {
+      const response = await apiClient.put(`/boards/${id}`, boardData);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.put(`/boards/${id}`, boardData);
-    return response.data;
   },
   
   deleteBoard: async (id) => {
-    if (USE_MOCK_API) {
-      return mockApi.deleteBoard(id);
+    try {
+      const response = await apiClient.delete(`/boards/${id}`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.delete(`/boards/${id}`);
-    return response.data;
   },
-  
-  // Column operations
+
+
+  // Columns
   getColumns: async (boardId) => {
-    if (USE_MOCK_API) {
-      return mockApi.getColumns(boardId);
+    try {
+      const response = await apiClient.get(`/boards/${boardId}/columns`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.get(`/boards/${boardId}/columns`);
-    return response.data;
   },
   
   createColumn: async (columnData) => {
-    if (USE_MOCK_API) {
-      return mockApi.createColumn(columnData);
+    try {
+      const response = await apiClient.post("/columns", columnData);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.post("/columns", columnData);
-    return response.data;
   },
   
   updateColumn: async (id, columnData) => {
-    if (USE_MOCK_API) {
-      return mockApi.updateColumn(id, columnData);
+    try {
+      const response = await apiClient.put(`/columns/${id}`, columnData);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.put(`/columns/${id}`, columnData);
-    return response.data;
   },
   
   deleteColumn: async (id) => {
-    if (USE_MOCK_API) {
-      return mockApi.deleteColumn(id);
+    try {
+      const response = await apiClient.delete(`/columns/${id}`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.delete(`/columns/${id}`);
-    return response.data;
   },
-  
-  // Task operations
+
+
+  // Tasks
   getTasks: async (columnId) => {
-    if (USE_MOCK_API) {
-      return mockApi.getTasks(columnId);
+    try {
+      const response = await apiClient.get(`/columns/${columnId}/tasks`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.get(`/columns/${columnId}/tasks`);
-    return response.data;
   },
   
   createTask: async (taskData) => {
-    if (USE_MOCK_API) {
-      return mockApi.createTask(taskData);
+    try {
+      const response = await apiClient.post("/tasks", taskData);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    
-    // Возможно проблема в формате данных - Spring Boot ожидает другую структуру
-    // Пробуем разные варианты именования полей
-    const payload = {
-      columnId: parseInt(taskData.columnId),
-      content: taskData.content,
-      order: taskData.order
-    };
-    
-    console.log("Отправляемые данные для создания задачи:", payload);
-    
-    const response = await apiClient.post("/tasks", payload);
-    return response.data;
   },
   
   updateTask: async (id, taskData) => {
-    if (USE_MOCK_API) {
-      return mockApi.updateTask(id, taskData);
+    try {
+      const response = await apiClient.put(`/tasks/${id}`, taskData);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.put(`/tasks/${id}`, taskData);
-    return response.data;
-  },
-  
-  moveTask: async (taskId, newColumnId, newOrder) => {
-    if (USE_MOCK_API) {
-      return mockApi.moveTask(taskId, newColumnId, newOrder);
-    }
-    const response = await apiClient.patch(`/tasks/${taskId}/move`, {
-      columnId: newColumnId,
-      order: newOrder,
-    });
-    return response.data;
   },
   
   deleteTask: async (id) => {
-    if (USE_MOCK_API) {
-      return mockApi.deleteTask(id);
+    try {
+      const response = await apiClient.delete(`/tasks/${id}`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.delete(`/tasks/${id}`);
-    return response.data;
   },
   
-  // Get complete board data
   getBoardData: async (boardId) => {
-    if (USE_MOCK_API) {
-      return mockApi.getBoardData(boardId);
+    try {
+      const response = await apiClient.get(`/boards/${boardId}/data`);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
-    const response = await apiClient.get(`/boards/${boardId}/data`);
-    return response.data;
   },
 };
 

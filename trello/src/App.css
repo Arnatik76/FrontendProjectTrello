@@ -37,7 +37,6 @@
   color: #888;
 }
 
-/* Board layout styles */
 .board-container {
   display: flex;
   flex-direction: column;
@@ -80,7 +79,6 @@
   border: 1px solid #d1d5db;
 }
 
-/* Column styles */
 .column {
   min-width: 280px;
   max-width: 280px;
@@ -145,7 +143,6 @@
   background-color: #d1d5db;
 }
 
-/* Task card styles */
 .card {
   background-color: white;
   border-radius: 4px;
@@ -184,14 +181,20 @@
   color: #b91c1c;
 }
 
-/* Form styles */
 .add-column-form, .add-task-form {
-  background-color: #e5e7eb;
+  background-color: #d4d6db;
   border-radius: 8px;
   padding: 0.8rem;
   margin-right: 1rem;
   min-width: 280px;
+  box-sizing: border-box;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.column .add-column-form, .column .add-task-form {
+  min-width: auto;
+  width: calc(100% - 1rem);
+  margin: 0.5rem;
 }
 
 .add-column {
@@ -214,7 +217,7 @@
 
 textarea, input[type="text"] {
   width: 100%;
-  padding: 0.5rem;
+  /* padding: 0.5rem; */
   margin-bottom: 0.5rem;
   border: 1px solid #d1d5db;
   border-radius: 4px;
@@ -227,7 +230,6 @@ textarea, input[type="text"] {
   gap: 0.5rem;
 }
 
-/* Home page styles */
 .home-container {
   padding: 2rem;
   max-width: 800px;
@@ -307,7 +309,44 @@ textarea, input[type="text"] {
   color: #4b5563;
 }
 
-/* Responsive styles for mobile devices */
+.board-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-board-btn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.edit-board-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.edit-board-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.edit-board-form input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.board-item .form-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
   .board-content {
     height: auto;

@@ -7,6 +7,8 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newBoardName, setNewBoardName] = useState("");
+  const [editingBoardId, setEditingBoardId] = useState(null);
+  const [editBoardName, setEditBoardName] = useState("");
 
   useEffect(() => {
     loadBoards();
@@ -43,6 +45,33 @@ function HomePage() {
     }
   };
 
+  const handleStartEditing = (board) => {
+    setEditingBoardId(board.id);
+    setEditBoardName(board.name);
+  };
+
+  const handleCancelEditing = () => {
+    setEditingBoardId(null);
+    setEditBoardName("");
+  };
+
+  const handleUpdateBoard = async (e, boardId) => {
+    e.preventDefault();
+    if (!editBoardName.trim()) return;
+    
+    try {
+      setLoading(true);
+      await api.updateBoard(boardId, { name: editBoardName });
+      setEditingBoardId(null);
+      await loadBoards();
+    } catch (err) {
+      setError("Failed to update board name. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="home-container">
       <h1>Мои Доски</h1>
@@ -69,23 +98,48 @@ function HomePage() {
       <ul className="boards-list">
         {boards.map((board) => (
           <li key={board.id} className="board-item">
-            <Link to={`/board/${board.id}`}>{board.name}</Link>
-            <button 
-              onClick={async () => {
-                if (window.confirm("Are you sure you want to delete this board?")) {
-                  try {
-                    await api.deleteBoard(board.id);
-                    await loadBoards();
-                  } catch (err) {
-                    setError("Failed to delete board. Please try again.");
-                    console.error(err);
-                  }
-                }
-              }}
-              className="delete-board-btn"
-            >
-              Delete
-            </button>
+            {editingBoardId === board.id ? (
+              <form onSubmit={(e) => handleUpdateBoard(e, board.id)} className="edit-board-form">
+                <input
+                  type="text"
+                  value={editBoardName}
+                  onChange={(e) => setEditBoardName(e.target.value)}
+                  autoFocus
+                />
+                <div className="form-buttons">
+                  <button type="submit" disabled={!editBoardName.trim()}>Save</button>
+                  <button type="button" onClick={handleCancelEditing}>Cancel</button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <Link to={`/board/${board.id}`}>{board.name}</Link>
+                <div className="board-actions">
+                  <button 
+                    onClick={() => handleStartEditing(board)}
+                    className="edit-board-btn"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      if (window.confirm("Are you sure you want to delete this board?")) {
+                        try {
+                          await api.deleteBoard(board.id);
+                          await loadBoards();
+                        } catch (err) {
+                          setError("Failed to delete board. Please try again.");
+                          console.error(err);
+                        }
+                      }
+                    }}
+                    className="delete-board-btn"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
           </li>
         ))}
       </ul>

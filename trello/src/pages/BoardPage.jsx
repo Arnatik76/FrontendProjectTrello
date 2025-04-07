@@ -65,20 +65,19 @@ function BoardPage() {
   const handleCreateTask = async (columnId, content) => {
     try {
       if (!columnId || isNaN(parseInt(columnId)) || parseInt(columnId) <= 0) {
-        setError("Недопустимый ID колонки");
-        console.error("Попытка создать задачу с неверным ID колонки:", columnId);
+        setError("Invalid column ID");
+        console.error("Attempt to create a task with an incorrect column ID:", columnId);
         return;
       }
       
-      // Убедимся, что columnId передается как число, а не строка
       const column = boardData.columns.find(col => col.id === parseInt(columnId));
       if (!column) {
-        setError("Колонка не найдена");
+        setError("The column was not found");
         return;
       }
       
       await api.createTask({
-        columnId: parseInt(columnId), // явно преобразуем в число
+        columnId: parseInt(columnId),
         content,
         order: column.tasks.length + 1,
       });

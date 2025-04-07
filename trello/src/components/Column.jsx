@@ -27,9 +27,6 @@ function Column({
     e.preventDefault();
     if (!newTaskContent.trim()) return;
     
-    // Убедитесь, что column.id не undefined и не 0
-    console.log("Creating task in column ID:", column.id);
-    
     onCreateTask(column.id, newTaskContent);
     setNewTaskContent("");
     setIsAddingTask(false);
