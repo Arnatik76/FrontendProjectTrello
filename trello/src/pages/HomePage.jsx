@@ -79,15 +79,20 @@ function HomePage() {
       {error && <div className="error-message">{error}</div>}
       
       <div className="create-board-form">
-        <form onSubmit={handleCreateBoard}>
+        <form onSubmit={handleCreateBoard} style={{ display: 'flex', alignItems: 'stretch' }}>
           <input
             type="text"
             value={newBoardName}
             onChange={(e) => setNewBoardName(e.target.value)}
             placeholder="Новая доска"
             disabled={loading}
+            style={{ height: '38px', padding: '0 10px', boxSizing: 'border-box' }}
           />
-          <button type="submit" disabled={loading || !newBoardName.trim()}>
+          <button 
+            type="submit" 
+            disabled={loading || !newBoardName.trim()}
+            style={{ height: '38px', padding: '0 15px', boxSizing: 'border-box', fontSize: '13px' }}
+          >
             Создать доску
           </button>
         </form>

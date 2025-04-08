@@ -8,9 +8,16 @@ const apiClient = axios.create({
 });
 
 const handleApiError = (error) => {
-  const message = error.response?.data?.message || error.message || 'Something went wrong';
   const status = error.response?.status || 500;
-  console.error(`API Error (${status}): ${message}`, error);
+  let message = error.response?.data?.message || error.message || 'Something went wrong';
+  
+  if (status === 404) {
+    message = error.response?.data?.message || 'The requested resource was not found';
+    console.error(`Not Found (404): ${message}`, error);
+  } else {
+    console.error(`API Error (${status}): ${message}`, error);
+  }
+  
   throw { message, status, error };
 };
 
