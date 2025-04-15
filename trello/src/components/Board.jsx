@@ -1,18 +1,24 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Column from "./Column";
+import ThemeToggle from "./ThemeToggle";
+import { useBoardContext } from "../contexts/BoardContext";
 
-function Board({ 
-  board, 
-  onCreateColumn, 
-  onUpdateColumn, 
-  onDeleteColumn,
-  onCreateTask,
-  onUpdateTask,
-  onMoveTask,
-  onDeleteTask,
-  onRefresh
-}) {
+function Board({ onNavigateHome }) {
+  const { 
+    boardData, 
+    loading, 
+    error, 
+    refresh, 
+    createColumn,
+    updateColumn,
+    deleteColumn,
+    createTask,
+    updateTask,
+    moveTask,
+    deleteTask
+  } = useBoardContext();
+  
   const [newColumnTitle, setNewColumnTitle] = useState("");
   const [isAddingColumn, setIsAddingColumn] = useState(false);
 
@@ -20,30 +26,46 @@ function Board({
     e.preventDefault();
     if (!newColumnTitle.trim()) return;
     
-    onCreateColumn(newColumnTitle);
+    createColumn(newColumnTitle);
     setNewColumnTitle("");
     setIsAddingColumn(false);
   };
+
+  if (loading && !boardData) {
+    return <div className="loading">Loading board...</div>;
+  }
+
+  if (error && !boardData) {
+    return (
+      <div className="error-container">
+        <div className="error-message">{error}</div>
+        <button onClick={onNavigateHome}>Back to Home</button>
+      </div>
+    );
+  }
 
   return (
     <div className="board-container">
       <div className="board-header">
         <Link to="/" className="back-button">Back to Boards</Link>
-        <h1>{board.name}</h1>
-        <button onClick={onRefresh} className="refresh-button">Refresh</button>
+        <h1 style={{ color: "var(--text-primary)" }}>{boardData?.name || "Board"}</h1>
+        <div className="header-actions">
+          <ThemeToggle />
+          <button onClick={refresh} className="refresh-button">Refresh</button>
+        </div>
       </div>
 
       <div className="board-content">
-        {board.columns.map(column => (
+        {boardData && boardData.columns && boardData.columns.map(column => (
           <Column 
             key={column.id} 
             column={column}
-            onUpdateColumn={onUpdateColumn}
-            onDeleteColumn={onDeleteColumn}
-            onCreateTask={onCreateTask}
-            onUpdateTask={onUpdateTask}
-            onMoveTask={onMoveTask}
-            onDeleteTask={onDeleteTask}
+            onUpdateColumn={updateColumn}
+            onDeleteColumn={deleteColumn}
+            onCreateTask={createTask}
+            onUpdateTask={updateTask}
+            onMoveTask={moveTask}
+            onDeleteTask={deleteTask}
           />
         ))}
         

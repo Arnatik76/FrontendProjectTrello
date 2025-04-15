@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import ThemeToggle from "../components/ThemeToggle";
 
 function HomePage() {
   const [boards, setBoards] = useState([]);
@@ -74,7 +75,12 @@ function HomePage() {
 
   return (
     <div className="home-container">
-      <h1>Мои Доски</h1>
+      <div className="board-header">
+        <h1 style={{ color: "var(--text-primary)" }}>Мои Доски</h1>
+        <div className="header-actions">
+          <ThemeToggle />
+        </div>
+      </div>
       
       {error && <div className="error-message">{error}</div>}
       
