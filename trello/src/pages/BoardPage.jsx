@@ -1,15 +1,24 @@
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { BoardProvider } from "../contexts/BoardContext";
+import { useDispatch } from "react-redux";
+import { fetchBoardById } from "../store/slices/boardsSlice";
+import { fetchColumns } from "../store/slices/columnsSlice";
 import Board from "../components/Board";
 
 function BoardPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Загружаем данные доски при монтировании компонента
+    dispatch(fetchBoardById(id));
+    // Загружаем колонки для доски
+    dispatch(fetchColumns(id));
+  }, [id, dispatch]);
 
   return (
-    <BoardProvider boardId={id}>
-      <Board onNavigateHome={() => navigate("/")} />
-    </BoardProvider>
+    <Board onNavigateHome={() => navigate("/")} boardId={id} />
   );
 }
 

@@ -1,41 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Column from "./Column";
 import ThemeToggle from "./ThemeToggle";
-import { useBoardContext } from "../contexts/BoardContext";
+import { 
+  fetchBoardById
+} from "../store/actions/boardActions";
+import { 
+  fetchColumns,
+  createColumn
+} from "../store/actions/columnActions";
+import { fetchAllTasks } from "../store/actions/taskActions";
+import { 
+  selectCurrentBoard, 
+  selectAllColumns,
+  selectBoardsStatus, 
+  selectBoardsError
+} from "../store/selectors";
 
-function Board({ onNavigateHome }) {
-  const { 
-    boardData, 
-    loading, 
-    error, 
-    refresh, 
-    createColumn,
-    updateColumn,
-    deleteColumn,
-    createTask,
-    updateTask,
-    moveTask,
-    deleteTask
-  } = useBoardContext();
+function Board({ onNavigateHome, boardId }) {
+  const dispatch = useDispatch();
+  
+  // Получаем данные из Redux хранилища
+  const board = useSelector(selectCurrentBoard);
+  const columns = useSelector(selectAllColumns);
+  const status = useSelector(selectBoardsStatus);
+  const error = useSelector(selectBoardsError);
   
   const [newColumnTitle, setNewColumnTitle] = useState("");
   const [isAddingColumn, setIsAddingColumn] = useState(false);
+
+  useEffect(() => {
+    // Загружаем данные доски и колонки при монтировании
+    dispatch(fetchBoardById(boardId));
+    dispatch(fetchColumns(boardId));
+    // Загружаем все задачи для этой доски
+    dispatch(fetchAllTasks(boardId));
+  }, [boardId, dispatch]);
 
   const handleAddColumn = (e) => {
     e.preventDefault();
     if (!newColumnTitle.trim()) return;
     
-    createColumn(newColumnTitle);
+    // Диспетчеризация действия для создания новой колонки
+    dispatch(createColumn({
+      boardId: parseInt(boardId),
+      title: newColumnTitle,
+      order: columns.length
+    }));
+    
     setNewColumnTitle("");
     setIsAddingColumn(false);
   };
 
-  if (loading && !boardData) {
+  const refresh = () => {
+    // Обновляем данные
+    dispatch(fetchBoardById(boardId));
+    dispatch(fetchColumns(boardId));
+    dispatch(fetchAllTasks(boardId));
+  };
+
+  if (status === "loading" && !board) {
     return <div className="loading">Loading board...</div>;
   }
 
-  if (error && !boardData) {
+  if (error && !board) {
     return (
       <div className="error-container">
         <div className="error-message">{error}</div>
@@ -48,7 +77,7 @@ function Board({ onNavigateHome }) {
     <div className="board-container">
       <div className="board-header">
         <Link to="/" className="back-button">Back to Boards</Link>
-        <h1 style={{ color: "var(--text-primary)" }}>{boardData?.name || "Board"}</h1>
+        <h1 style={{ color: "var(--text-primary)" }}>{board?.name || "Board"}</h1>
         <div className="header-actions">
           <ThemeToggle />
           <button onClick={refresh} className="refresh-button">Refresh</button>
@@ -56,16 +85,10 @@ function Board({ onNavigateHome }) {
       </div>
 
       <div className="board-content">
-        {boardData && boardData.columns && boardData.columns.map(column => (
+        {columns.map(column => (
           <Column 
             key={column.id} 
             column={column}
-            onUpdateColumn={updateColumn}
-            onDeleteColumn={deleteColumn}
-            onCreateTask={createTask}
-            onUpdateTask={updateTask}
-            onMoveTask={moveTask}
-            onDeleteTask={deleteTask}
           />
         ))}
         

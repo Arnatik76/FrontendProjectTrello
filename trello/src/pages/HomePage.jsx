@@ -1,49 +1,43 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import api from "../services/api";
 import ThemeToggle from "../components/ThemeToggle";
+import { 
+  fetchBoards,
+  createBoard,
+  updateBoard,
+  deleteBoard
+} from "../store/actions/boardActions";
+import { 
+  selectAllBoards,
+  selectBoardsStatus,
+  selectBoardsError
+} from "../store/selectors";
 
 function HomePage() {
-  const [boards, setBoards] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  
+  // Получаем данные из Redux хранилища
+  const boards = useSelector(selectAllBoards);
+  const status = useSelector(selectBoardsStatus);
+  const error = useSelector(selectBoardsError);
+  
   const [newBoardName, setNewBoardName] = useState("");
   const [editingBoardId, setEditingBoardId] = useState(null);
   const [editBoardName, setEditBoardName] = useState("");
 
   useEffect(() => {
-    loadBoards();
-  }, []);
+    // При монтировании компонента загружаем список всех досок
+    dispatch(fetchBoards());
+  }, [dispatch]);
 
-  const loadBoards = async () => {
-    try {
-      setLoading(true);
-      const boardsData = await api.getBoards();
-      setBoards(boardsData);
-      setError(null);
-    } catch (err) {
-      setError("Failed to load boards. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreateBoard = async (e) => {
+  const handleCreateBoard = (e) => {
     e.preventDefault();
     if (!newBoardName.trim()) return;
     
-    try {
-      setLoading(true);
-      await api.createBoard({ name: newBoardName });
-      setNewBoardName("");
-      await loadBoards();
-    } catch (err) {
-      setError("Failed to create board. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    // Диспетчеризация действия для создания новой доски
+    dispatch(createBoard({ name: newBoardName }));
+    setNewBoardName("");
   };
 
   const handleStartEditing = (board) => {
@@ -56,27 +50,35 @@ function HomePage() {
     setEditBoardName("");
   };
 
-  const handleUpdateBoard = async (e, boardId) => {
+  const handleUpdateBoard = (e, boardId) => {
     e.preventDefault();
     if (!editBoardName.trim()) return;
     
-    try {
-      setLoading(true);
-      await api.updateBoard(boardId, { name: editBoardName });
-      setEditingBoardId(null);
-      await loadBoards();
-    } catch (err) {
-      setError("Failed to update board name. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
+    const boardToUpdate = boards.find(board => board.id === boardId);
+    if (boardToUpdate) {
+      // Диспетчеризация действия для обновления доски
+      dispatch(updateBoard({
+        id: boardId,
+        boardData: {
+          ...boardToUpdate,
+          name: editBoardName
+        }
+      }));
+    }
+    setEditingBoardId(null);
+  };
+
+  const handleDeleteBoard = (boardId) => {
+    if (window.confirm("Are you sure you want to delete this board?")) {
+      // Диспетчеризация действия для удаления доски
+      dispatch(deleteBoard(boardId));
     }
   };
 
   return (
     <div className="home-container">
       <div className="board-header">
-        <h1 style={{ color: "var(--text-primary)" }}>Мои Доски</h1>
+        <h1 style={{ color: "var(--text-primary)" }}>My Boards</h1>
         <div className="header-actions">
           <ThemeToggle />
         </div>
@@ -85,26 +87,26 @@ function HomePage() {
       {error && <div className="error-message">{error}</div>}
       
       <div className="create-board-form">
-        <form onSubmit={handleCreateBoard} style={{ display: 'flex', alignItems: 'stretch' }}>
+        <form onSubmit={handleCreateBoard}>
           <input
             type="text"
             value={newBoardName}
             onChange={(e) => setNewBoardName(e.target.value)}
-            placeholder="Новая доска"
-            disabled={loading}
-            style={{ height: '38px', padding: '0 10px', boxSizing: 'border-box' }}
+            placeholder="New Board"
+            disabled={status === "loading"}
           />
           <button 
             type="submit" 
-            disabled={loading || !newBoardName.trim()}
-            style={{ height: '38px', padding: '0 15px', boxSizing: 'border-box', fontSize: '13px' }}
+            disabled={status === "loading" || !newBoardName.trim()}
           >
-            Создать доску
+            Create Board
           </button>
         </form>
       </div>
       
-      {loading && <div className="loading">Loading boards...</div>}
+      {status === "loading" && boards.length === 0 && (
+        <div className="loading">Loading boards...</div>
+      )}
       
       <ul className="boards-list">
         {boards.map((board) => (
@@ -133,17 +135,7 @@ function HomePage() {
                     Edit
                   </button>
                   <button 
-                    onClick={async () => {
-                      if (window.confirm("Are you sure you want to delete this board?")) {
-                        try {
-                          await api.deleteBoard(board.id);
-                          await loadBoards();
-                        } catch (err) {
-                          setError("Failed to delete board. Please try again.");
-                          console.error(err);
-                        }
-                      }
-                    }}
+                    onClick={() => handleDeleteBoard(board.id)}
                     className="delete-board-btn"
                   >
                     Delete

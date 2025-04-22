@@ -1,6 +1,9 @@
 import { useState, memo, useCallback, useMemo } from 'react';
+import { useDispatch } from "react-redux";
+import { updateTask, deleteTask } from "../store/actions/taskActions";
 
-function Task({ task, onUpdateTask, onDeleteTask }) {
+function Task({ task }) {
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(task.content);
 
@@ -28,15 +31,22 @@ function Task({ task, onUpdateTask, onDeleteTask }) {
     e.preventDefault();
     if (!editContent.trim()) return;
     
-    onUpdateTask(task.id, editContent);
+    dispatch(updateTask({
+      id: task.id,
+      taskData: {
+        ...task,
+        content: editContent
+      }
+    }));
+    
     setIsEditing(false);
-  }, [task.id, editContent, onUpdateTask]);
+  }, [task.id, editContent, dispatch, task]);
 
   const handleDeleteTask = useCallback(() => {
     if (window.confirm("Are you sure you want to delete this task?")) {
-      onDeleteTask(task.id);
+      dispatch(deleteTask(task.id));
     }
-  }, [task.id, onDeleteTask]);
+  }, [task.id, dispatch]);
 
   const handleEditClick = useCallback(() => {
     setIsEditing(true);
@@ -96,7 +106,5 @@ function Task({ task, onUpdateTask, onDeleteTask }) {
 
 export default memo(Task, (prevProps, nextProps) => {
   return prevProps.task.id === nextProps.task.id && 
-         prevProps.task.content === nextProps.task.content &&
-         prevProps.onUpdateTask === nextProps.onUpdateTask &&
-         prevProps.onDeleteTask === nextProps.onDeleteTask;
+         prevProps.task.content === nextProps.task.content;
 });

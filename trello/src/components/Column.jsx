@@ -1,15 +1,19 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import Task from "./Task";
+import { 
+  updateColumn,
+  deleteColumn
+} from "../store/actions/columnActions";
+import { createTask } from "../store/actions/taskActions";
+import { selectTasksByColumn } from "../store/selectors";
 
-function Column({ 
-  column,
-  onUpdateColumn,
-  onDeleteColumn,
-  onCreateTask,
-  onUpdateTask,
-  onMoveTask,
-  onDeleteTask
-}) {
+function Column({ column }) {
+  const dispatch = useDispatch();
+  
+  // Получаем задачи для этой колонки
+  const tasks = useSelector(state => selectTasksByColumn(state, column.id));
+  
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(column.title);
   const [isAddingTask, setIsAddingTask] = useState(false);
@@ -19,7 +23,15 @@ function Column({
     e.preventDefault();
     if (!editTitle.trim()) return;
     
-    onUpdateColumn(column.id, editTitle);
+    // Диспетчеризация действия для обновления колонки
+    dispatch(updateColumn({
+      id: column.id,
+      columnData: {
+        ...column,
+        title: editTitle
+      }
+    }));
+    
     setIsEditing(false);
   };
 
@@ -27,14 +39,21 @@ function Column({
     e.preventDefault();
     if (!newTaskContent.trim()) return;
     
-    onCreateTask(column.id, newTaskContent);
+    // Диспетчеризация действия для создания задачи
+    dispatch(createTask({
+      columnId: column.id,
+      content: newTaskContent,
+      order: tasks.length
+    }));
+    
     setNewTaskContent("");
     setIsAddingTask(false);
   };
 
   const handleDeleteColumn = () => {
     if (window.confirm("Are you sure you want to delete this column and all its tasks?")) {
-      onDeleteColumn(column.id);
+      // Диспетчеризация действия для удаления колонки
+      dispatch(deleteColumn(column.id));
     }
   };
 
@@ -84,12 +103,10 @@ function Column({
       </div>
       
       <div className="column-cards">
-        {column.tasks.map((task) => (
+        {tasks.map((task) => (
           <Task 
             key={task.id} 
             task={task}
-            onUpdateTask={onUpdateTask}
-            onDeleteTask={onDeleteTask}
           />
         ))}
       </div>
