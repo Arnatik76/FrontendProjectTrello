@@ -7,7 +7,7 @@ import {
   createBoard,
   updateBoard,
   deleteBoard
-} from "../store/actions/boardActions";
+} from "../store/slices/boardsSlice";
 import { 
   selectAllBoards,
   selectBoardsStatus,
@@ -17,7 +17,6 @@ import {
 function HomePage() {
   const dispatch = useDispatch();
   
-  // Получаем данные из Redux хранилища
   const boards = useSelector(selectAllBoards);
   const status = useSelector(selectBoardsStatus);
   const error = useSelector(selectBoardsError);
@@ -27,7 +26,6 @@ function HomePage() {
   const [editBoardName, setEditBoardName] = useState("");
 
   useEffect(() => {
-    // При монтировании компонента загружаем список всех досок
     dispatch(fetchBoards());
   }, [dispatch]);
 
@@ -35,7 +33,6 @@ function HomePage() {
     e.preventDefault();
     if (!newBoardName.trim()) return;
     
-    // Диспетчеризация действия для создания новой доски
     dispatch(createBoard({ name: newBoardName }));
     setNewBoardName("");
   };
@@ -56,7 +53,6 @@ function HomePage() {
     
     const boardToUpdate = boards.find(board => board.id === boardId);
     if (boardToUpdate) {
-      // Диспетчеризация действия для обновления доски
       dispatch(updateBoard({
         id: boardId,
         boardData: {
@@ -70,7 +66,6 @@ function HomePage() {
 
   const handleDeleteBoard = (boardId) => {
     if (window.confirm("Are you sure you want to delete this board?")) {
-      // Диспетчеризация действия для удаления доски
       dispatch(deleteBoard(boardId));
     }
   };

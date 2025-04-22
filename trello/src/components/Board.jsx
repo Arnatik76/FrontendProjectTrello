@@ -5,12 +5,12 @@ import Column from "./Column";
 import ThemeToggle from "./ThemeToggle";
 import { 
   fetchBoardById
-} from "../store/actions/boardActions";
+} from "../store/slices/boardsSlice";
 import { 
   fetchColumns,
   createColumn
-} from "../store/actions/columnActions";
-import { fetchAllTasks } from "../store/actions/taskActions";
+} from "../store/slices/columnsSlice";
+import { fetchTasks } from "../store/slices/tasksSlice";
 import { 
   selectCurrentBoard, 
   selectAllColumns,
@@ -21,7 +21,6 @@ import {
 function Board({ onNavigateHome, boardId }) {
   const dispatch = useDispatch();
   
-  // Получаем данные из Redux хранилища
   const board = useSelector(selectCurrentBoard);
   const columns = useSelector(selectAllColumns);
   const status = useSelector(selectBoardsStatus);
@@ -31,18 +30,15 @@ function Board({ onNavigateHome, boardId }) {
   const [isAddingColumn, setIsAddingColumn] = useState(false);
 
   useEffect(() => {
-    // Загружаем данные доски и колонки при монтировании
     dispatch(fetchBoardById(boardId));
     dispatch(fetchColumns(boardId));
-    // Загружаем все задачи для этой доски
-    dispatch(fetchAllTasks(boardId));
+    dispatch(fetchTasks(boardId));
   }, [boardId, dispatch]);
 
   const handleAddColumn = (e) => {
     e.preventDefault();
     if (!newColumnTitle.trim()) return;
     
-    // Диспетчеризация действия для создания новой колонки
     dispatch(createColumn({
       boardId: parseInt(boardId),
       title: newColumnTitle,
@@ -54,7 +50,6 @@ function Board({ onNavigateHome, boardId }) {
   };
 
   const refresh = () => {
-    // Обновляем данные
     dispatch(fetchBoardById(boardId));
     dispatch(fetchColumns(boardId));
     dispatch(fetchAllTasks(boardId));

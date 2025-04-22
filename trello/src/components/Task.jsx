@@ -1,6 +1,6 @@
 import { useState, memo, useCallback, useMemo } from 'react';
 import { useDispatch } from "react-redux";
-import { updateTask, deleteTask } from "../store/actions/taskActions";
+import { updateTask, deleteTask } from "../store/slices/tasksSlice";
 
 function Task({ task }) {
   const dispatch = useDispatch();

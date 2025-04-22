@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../services/api";
 
-// Асинхронные thunk-действия
 export const fetchBoards = createAsyncThunk(
   "boards/fetchBoards",
   async (_, { rejectWithValue }) => {
@@ -61,7 +60,7 @@ export const deleteBoard = createAsyncThunk(
 const initialState = {
   boards: [],
   currentBoard: null,
-  status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: "idle", // idle | loading | succeeded | failed
   error: null,
 };
 
@@ -71,7 +70,6 @@ const boardsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Получение всех досок
       .addCase(fetchBoards.pending, (state) => {
         state.status = "loading";
       })
@@ -85,7 +83,6 @@ const boardsSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Получение доски по ID
       .addCase(fetchBoardById.pending, (state) => {
         state.status = "loading";
       })
@@ -99,12 +96,10 @@ const boardsSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Создание новой доски
       .addCase(createBoard.fulfilled, (state, action) => {
         state.boards.push(action.payload);
       })
 
-      // Обновление доски
       .addCase(updateBoard.fulfilled, (state, action) => {
         const index = state.boards.findIndex((board) => board.id === action.payload.id);
         if (index !== -1) {
@@ -115,7 +110,6 @@ const boardsSlice = createSlice({
         }
       })
 
-      // Удаление доски
       .addCase(deleteBoard.fulfilled, (state, action) => {
         state.boards = state.boards.filter((board) => board.id !== action.payload);
         if (state.currentBoard && state.currentBoard.id === action.payload) {
