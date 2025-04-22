@@ -11,7 +11,9 @@ function BoardPage() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // Загружаем данные доски при монтировании компонента
     dispatch(fetchBoardById(id));
+    // Загружаем колонки для доски
     dispatch(fetchColumns(id));
   }, [id, dispatch]);
 

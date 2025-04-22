@@ -4,13 +4,14 @@ import Task from "./Task";
 import { 
   updateColumn,
   deleteColumn
-} from "../store/slices/columnsSlice";
-import { createTask } from "../store/slices/tasksSlice";
+} from "../store/actions/columnActions";
+import { createTask } from "../store/actions/taskActions";
 import { selectTasksByColumn } from "../store/selectors";
 
 function Column({ column }) {
   const dispatch = useDispatch();
   
+  // Получаем задачи для этой колонки
   const tasks = useSelector(state => selectTasksByColumn(state, column.id));
   
   const [isEditing, setIsEditing] = useState(false);
@@ -22,6 +23,7 @@ function Column({ column }) {
     e.preventDefault();
     if (!editTitle.trim()) return;
     
+    // Диспетчеризация действия для обновления колонки
     dispatch(updateColumn({
       id: column.id,
       columnData: {
@@ -37,6 +39,7 @@ function Column({ column }) {
     e.preventDefault();
     if (!newTaskContent.trim()) return;
     
+    // Диспетчеризация действия для создания задачи
     dispatch(createTask({
       columnId: column.id,
       content: newTaskContent,
@@ -49,6 +52,7 @@ function Column({ column }) {
 
   const handleDeleteColumn = () => {
     if (window.confirm("Are you sure you want to delete this column and all its tasks?")) {
+      // Диспетчеризация действия для удаления колонки
       dispatch(deleteColumn(column.id));
     }
   };
