@@ -1,27 +1,31 @@
 import { useState, memo, useCallback, useMemo } from 'react';
-import { useDispatch } from "react-redux";
-import { updateTask, deleteTask } from "../store/actions/taskActions";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTask, deleteTask } from "../store/slices/tasksSlice";
+import { selectTasksStatus } from "../store/selectors";
 
 function Task({ task }) {
   const dispatch = useDispatch();
+  const tasksStatus = useSelector(selectTasksStatus);
+
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(task.content);
+
+  const isTaskUpdatingOrDeleting = tasksStatus === 'loading';
 
   const taskData = useMemo(() => {
     return {
       id: task.id,
       content: task.content,
-      formattedDate: task.date ? new Date(task.date).toLocaleDateString() : null,
     };
-  }, [task.id, task.content, task.date]);
+  }, [task.id, task.content /*, task.date, task.priority */]);
 
-  const cardClasses = useMemo(() => {
-    const classes = ['card'];
-    if (task.priority === 'high') classes.push('priority-high');
-    if (task.priority === 'medium') classes.push('priority-medium');
-    if (task.priority === 'low') classes.push('priority-low');
-    return classes.join(' ');
-  }, [task.priority]);
+  // const cardClasses = useMemo(() => {
+  //   const classes = ['card', 'task']; // Add base 'task' class if needed
+  //   if (task.priority === 'high') classes.push('priority-high');
+  //   // ... other priorities
+  //   return classes.join(' ');
+  // }, [task.priority]);
+  const cardClasses = 'card task';
 
   const handleContentChange = useCallback((e) => {
     setEditContent(e.target.value);
@@ -29,8 +33,11 @@ function Task({ task }) {
 
   const handleEditSubmit = useCallback((e) => {
     e.preventDefault();
-    if (!editContent.trim()) return;
-    
+    if (!editContent.trim() || editContent === task.content) {
+      setIsEditing(false);
+      return;
+    }
+
     dispatch(updateTask({
       id: task.id,
       taskData: {
@@ -38,9 +45,9 @@ function Task({ task }) {
         content: editContent
       }
     }));
-    
+
     setIsEditing(false);
-  }, [task.id, editContent, dispatch, task]);
+  }, [task, editContent, dispatch]);
 
   const handleDeleteTask = useCallback(() => {
     if (window.confirm("Are you sure you want to delete this task?")) {
@@ -50,7 +57,8 @@ function Task({ task }) {
 
   const handleEditClick = useCallback(() => {
     setIsEditing(true);
-  }, []);
+    setEditContent(task.content);
+  }, [task.content]);
 
   const handleCancelClick = useCallback(() => {
     setIsEditing(false);
@@ -63,39 +71,42 @@ function Task({ task }) {
         value={editContent}
         onChange={handleContentChange}
         autoFocus
+        disabled={isTaskUpdatingOrDeleting}
       />
       <div className="form-buttons">
-        <button type="submit">Save</button>
-        <button 
-          type="button" 
+        <button type="submit" disabled={isTaskUpdatingOrDeleting || !editContent.trim() || editContent === task.content}>Save</button>
+        <button
+          type="button"
           onClick={handleCancelClick}
+          disabled={isTaskUpdatingOrDeleting}
         >
           Cancel
         </button>
       </div>
     </form>
-  ), [editContent, handleContentChange, handleEditSubmit, handleCancelClick]);
+  ), [editContent, handleContentChange, handleEditSubmit, handleCancelClick, isTaskUpdatingOrDeleting, task.content]);
 
   const displayContent = useMemo(() => (
     <div className="card-content">
-      <div className="card-text">{taskData.content}</div>
-      {taskData.formattedDate && <div className="card-date">{taskData.formattedDate}</div>}
+      <div className="card-text" onClick={handleEditClick}>{taskData.content}</div>
       <div className="card-actions">
-        <button 
+        <button
           className="edit-task-btn"
           onClick={handleEditClick}
+          disabled={isTaskUpdatingOrDeleting}
         >
           Edit
         </button>
-        <button 
+        <button
           className="delete-task-btn"
           onClick={handleDeleteTask}
+          disabled={isTaskUpdatingOrDeleting}
         >
           Delete
         </button>
       </div>
     </div>
-  ), [taskData, handleEditClick, handleDeleteTask]);
+  ), [taskData, handleEditClick, handleDeleteTask, isTaskUpdatingOrDeleting]);
 
   return (
     <div className={cardClasses}>
@@ -105,6 +116,7 @@ function Task({ task }) {
 }
 
 export default memo(Task, (prevProps, nextProps) => {
-  return prevProps.task.id === nextProps.task.id && 
-         prevProps.task.content === nextProps.task.content;
+  return prevProps.task.id === nextProps.task.id &&
+         prevProps.task.content === nextProps.task.content &&
+         prevProps.task.order === nextProps.task.order;
 });

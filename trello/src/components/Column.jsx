@@ -1,29 +1,35 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import Task from "./Task";
-import { 
+import {
   updateColumn,
   deleteColumn
-} from "../store/actions/columnActions";
-import { createTask } from "../store/actions/taskActions";
-import { selectTasksByColumn } from "../store/selectors";
+} from "../store/slices/columnsSlice";
+import { createTask } from "../store/slices/tasksSlice";
+import { selectTasksByColumn, selectTasksStatus, selectColumnsStatus } from "../store/selectors";
 
 function Column({ column }) {
   const dispatch = useDispatch();
-  
-  // Получаем задачи для этой колонки
+
   const tasks = useSelector(state => selectTasksByColumn(state, column.id));
-  
+  const tasksStatus = useSelector(selectTasksStatus);
+  const columnsStatus = useSelector(selectColumnsStatus);
+
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(column.title);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskContent, setNewTaskContent] = useState("");
 
+  const isColumnUpdating = columnsStatus === 'loading';
+  const isTaskCreating = tasksStatus === 'loading';
+
   const handleEditSubmit = (e) => {
     e.preventDefault();
-    if (!editTitle.trim()) return;
-    
-    // Диспетчеризация действия для обновления колонки
+    if (!editTitle.trim() || editTitle === column.title) {
+       setIsEditing(false);
+       return;
+    }
+
     dispatch(updateColumn({
       id: column.id,
       columnData: {
@@ -31,30 +37,43 @@ function Column({ column }) {
         title: editTitle
       }
     }));
-    
+
     setIsEditing(false);
   };
 
   const handleAddTask = (e) => {
     e.preventDefault();
-    if (!newTaskContent.trim()) return;
-    
-    // Диспетчеризация действия для создания задачи
+    console.log("handleAddTask called. Content:", newTaskContent, "Is loading:", isTaskCreating); // Добавлено
+    if (!newTaskContent.trim()) {
+      console.log("Content is empty. Aborting."); // Добавлено
+      return; 
+    }
+
+    console.log("Dispatching createTask..."); // Добавлено
     dispatch(createTask({
       columnId: column.id,
       content: newTaskContent,
-      order: tasks.length
+      order: tasks.length 
     }));
-    
+
     setNewTaskContent("");
     setIsAddingTask(false);
   };
 
   const handleDeleteColumn = () => {
-    if (window.confirm("Are you sure you want to delete this column and all its tasks?")) {
-      // Диспетчеризация действия для удаления колонки
+    if (window.confirm(`Are you sure you want to delete the column "${column.title}" and all its tasks? This cannot be undone.`)) {
       dispatch(deleteColumn(column.id));
     }
+  };
+
+  const handleCancelEdit = () => {
+     setIsEditing(false);
+     setEditTitle(column.title);
+  };
+
+  const handleCancelAddTask = () => {
+     setIsAddingTask(false);
+     setNewTaskContent("");
   };
 
   return (
@@ -67,15 +86,14 @@ function Column({ column }) {
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               autoFocus
+              disabled={isColumnUpdating}
             />
             <div className="form-buttons">
-              <button type="submit">Save</button>
-              <button 
-                type="button" 
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditTitle(column.title);
-                }}
+              <button type="submit" disabled={isColumnUpdating || !editTitle.trim() || editTitle === column.title}>Save</button>
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                disabled={isColumnUpdating}
               >
                 Cancel
               </button>
@@ -83,17 +101,19 @@ function Column({ column }) {
           </form>
         ) : (
           <div className="column-title-container">
-            <span className="column-title">{column.title}</span>
+            <span className="column-title" onClick={() => setIsEditing(true)}>{column.title}</span>
             <div className="column-actions">
-              <button 
+              <button
                 className="edit-column-btn"
                 onClick={() => setIsEditing(true)}
+                disabled={isColumnUpdating}
               >
                 Edit
               </button>
-              <button 
+              <button
                 className="delete-column-btn"
                 onClick={handleDeleteColumn}
+                disabled={isColumnUpdating}
               >
                 Delete
               </button>
@@ -101,16 +121,17 @@ function Column({ column }) {
           </div>
         )}
       </div>
-      
+
       <div className="column-cards">
+        {tasksStatus === 'loading' && tasks.length === 0 && <div>Loading tasks...</div>}
         {tasks.map((task) => (
-          <Task 
-            key={task.id} 
+          <Task
+            key={task.id}
             task={task}
           />
         ))}
       </div>
-      
+
       {isAddingTask ? (
         <div className="add-task-form">
           <form onSubmit={handleAddTask}>
@@ -119,15 +140,16 @@ function Column({ column }) {
               onChange={(e) => setNewTaskContent(e.target.value)}
               placeholder="Enter task content"
               autoFocus
+              disabled={isTaskCreating}
             />
             <div className="form-buttons">
-              <button type="submit">Add Task</button>
-              <button 
-                type="button" 
-                onClick={() => {
-                  setIsAddingTask(false);
-                  setNewTaskContent("");
-                }}
+              <button type="submit" disabled={isTaskCreating || !newTaskContent.trim()}>
+                {isTaskCreating ? 'Adding...' : 'Add Task'}
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelAddTask}
+                disabled={isTaskCreating}
               >
                 Cancel
               </button>
@@ -135,9 +157,10 @@ function Column({ column }) {
           </form>
         </div>
       ) : (
-        <button 
+        <button
           className="add-card-button"
           onClick={() => setIsAddingTask(true)}
+          disabled={isTaskCreating || isColumnUpdating}
         >
           + Add a card
         </button>

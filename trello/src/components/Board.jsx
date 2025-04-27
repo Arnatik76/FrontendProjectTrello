@@ -3,95 +3,112 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Column from "./Column";
 import ThemeToggle from "./ThemeToggle";
-import { 
+import {
   fetchBoardById
-} from "../store/actions/boardActions";
-import { 
+} from "../store/slices/boardsSlice";
+import {
   fetchColumns,
   createColumn
-} from "../store/actions/columnActions";
-import { fetchAllTasks } from "../store/actions/taskActions";
-import { 
-  selectCurrentBoard, 
+} from "../store/slices/columnsSlice";
+import { fetchAllTasks } from "../store/slices/tasksSlice";
+import {
+  selectCurrentBoard,
   selectAllColumns,
-  selectBoardsStatus, 
-  selectBoardsError
+  selectBoardsStatus,
+  selectColumnsStatus,
+  selectBoardsError,
+  selectColumnsError,
+  selectTasksError,
+  selectTasksStatus
 } from "../store/selectors";
 
 function Board({ onNavigateHome, boardId }) {
   const dispatch = useDispatch();
-  
-  // Получаем данные из Redux хранилища
+
   const board = useSelector(selectCurrentBoard);
   const columns = useSelector(selectAllColumns);
-  const status = useSelector(selectBoardsStatus);
-  const error = useSelector(selectBoardsError);
-  
+  const boardStatus = useSelector(selectBoardsStatus);
+  const columnsStatus = useSelector(selectColumnsStatus);
+  const tasksStatus = useSelector(selectTasksStatus);
+
+  const boardError = useSelector(selectBoardsError);
+  const columnsError = useSelector(selectColumnsError);
+  const tasksError = useSelector(selectTasksError);
+  const error = boardError || columnsError || tasksError;
+
   const [newColumnTitle, setNewColumnTitle] = useState("");
   const [isAddingColumn, setIsAddingColumn] = useState(false);
-
-  useEffect(() => {
-    // Загружаем данные доски и колонки при монтировании
-    dispatch(fetchBoardById(boardId));
-    dispatch(fetchColumns(boardId));
-    // Загружаем все задачи для этой доски
-    dispatch(fetchAllTasks(boardId));
-  }, [boardId, dispatch]);
 
   const handleAddColumn = (e) => {
     e.preventDefault();
     if (!newColumnTitle.trim()) return;
-    
-    // Диспетчеризация действия для создания новой колонки
+
     dispatch(createColumn({
-      boardId: parseInt(boardId),
+      boardId: boardId,
       title: newColumnTitle,
       order: columns.length
     }));
-    
+
     setNewColumnTitle("");
     setIsAddingColumn(false);
   };
 
   const refresh = () => {
-    // Обновляем данные
     dispatch(fetchBoardById(boardId));
-    dispatch(fetchColumns(boardId));
     dispatch(fetchAllTasks(boardId));
   };
 
-  if (status === "loading" && !board) {
+  const isBoardLoading = boardStatus === 'loading';
+  const areColumnsLoading = columnsStatus === 'loading';
+  const areTasksLoading = tasksStatus === 'loading';
+  const isLoading = isBoardLoading || areColumnsLoading || areTasksLoading;
+
+  if (isBoardLoading && !board) {
     return <div className="loading">Loading board...</div>;
   }
 
-  if (error && !board) {
+  if (boardError && !board) {
     return (
       <div className="error-container">
-        <div className="error-message">{error}</div>
+        <div className="error-message">Error loading board: {boardError}</div>
         <button onClick={onNavigateHome}>Back to Home</button>
       </div>
     );
+  }
+
+  if (boardStatus === 'succeeded' && !board) {
+     return (
+       <div className="error-container">
+         <div className="error-message">Board not found.</div>
+         <Link to="/" className="back-button">Back to Boards</Link>
+       </div>
+     );
   }
 
   return (
     <div className="board-container">
       <div className="board-header">
         <Link to="/" className="back-button">Back to Boards</Link>
-        <h1 style={{ color: "var(--text-primary)" }}>{board?.name || "Board"}</h1>
+        <h1 style={{ color: "var(--text-primary)" }}>{board?.name || (isBoardLoading ? "Loading..." : "Board")}</h1>
         <div className="header-actions">
           <ThemeToggle />
-          <button onClick={refresh} className="refresh-button">Refresh</button>
+          <button onClick={refresh} className="refresh-button" disabled={isLoading}>
+            {isLoading ? 'Refreshing...' : 'Refresh'}
+          </button>
         </div>
       </div>
 
+      {error && !boardError && <div className="error-message">Error: {error}</div>}
+
       <div className="board-content">
+        {areColumnsLoading && columns.length === 0 && <div className="loading">Loading columns...</div>}
         {columns.map(column => (
-          <Column 
-            key={column.id} 
+          <Column
+            key={column.id}
             column={column}
           />
         ))}
-        
+
         {isAddingColumn ? (
           <div className="add-column-form">
             <form onSubmit={handleAddColumn}>
@@ -101,15 +118,19 @@ function Board({ onNavigateHome, boardId }) {
                 onChange={(e) => setNewColumnTitle(e.target.value)}
                 placeholder="Enter column title"
                 autoFocus
+                disabled={columnsStatus === 'loading'}
               />
               <div className="form-buttons">
-                <button type="submit">Add Column</button>
-                <button 
-                  type="button" 
+                <button type="submit" disabled={columnsStatus === 'loading' || !newColumnTitle.trim()}>
+                  {columnsStatus === 'loading' ? 'Adding...' : 'Add Column'}
+                </button>
+                <button
+                  type="button"
                   onClick={() => {
                     setIsAddingColumn(false);
                     setNewColumnTitle("");
                   }}
+                  disabled={columnsStatus === 'loading'}
                 >
                   Cancel
                 </button>
@@ -118,9 +139,10 @@ function Board({ onNavigateHome, boardId }) {
           </div>
         ) : (
           <div className="add-column">
-            <button 
+            <button
               className="add-column-button"
               onClick={() => setIsAddingColumn(true)}
+              disabled={isLoading}
             >
               + Add another column
             </button>

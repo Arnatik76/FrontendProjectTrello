@@ -1,3 +1,5 @@
+import { createSelector } from '@reduxjs/toolkit'; // Добавьте импорт
+
 // Селекторы для досок
 export const selectAllBoards = (state) => state.boards.boards;
 export const selectCurrentBoard = (state) => state.boards.currentBoard;
@@ -16,11 +18,22 @@ export const selectColumnById = (state, columnId) =>
   state.columns.columns.find(column => column.id === columnId);
 
 // Селекторы для задач
-export const selectAllTasks = (state) => state.tasks.tasks;
-export const selectTasksByColumn = (state, columnId) => 
-  state.tasks.tasks[columnId] || [];
+const selectTasksState = (state) => state.tasks.tasks;
+const selectColumnIdArg = (state, columnId) => columnId; // Селектор для получения второго аргумента
+
+export const selectAllTasks = (state) => state.tasks.tasks; // Оставляем как есть, если не используется в useSelector напрямую с созданием нового массива/объекта
+
+// Заменяем старый селектор на мемоизированный
+export const selectTasksByColumn = createSelector(
+  [selectTasksState, selectColumnIdArg], // Входные селекторы
+  (tasks, columnId) => tasks[columnId] || [] // Функция-результат (будет вызвана только если tasks или columnId изменились)
+);
+
 export const selectTasksStatus = (state) => state.tasks.status;
 export const selectTasksError = (state) => state.tasks.error;
+
+// Селектор selectTaskById тоже может создавать новые объекты, но он ищет один элемент, 
+// поэтому проблема менее вероятна. Если будут проблемы, его тоже можно мемоизировать.
 export const selectTaskById = (state, taskId) => {
   // Ищем задачу по всем колонкам
   for (const columnId in state.tasks.tasks) {
@@ -31,22 +44,34 @@ export const selectTaskById = (state, taskId) => {
 };
 
 // Комбинированные селекторы
-export const selectBoardWithColumnsAndTasks = (state, boardId) => {
-  const board = selectBoardById(state, boardId) || selectCurrentBoard(state);
-  if (!board) return null;
-  
-  const columns = selectAllColumns(state)
-    .filter(column => column.boardId === board.id)
-    .sort((a, b) => a.order - b.order);
-  
-  // Для каждой колонки получаем ее задачи
-  const columnsWithTasks = columns.map(column => ({
-    ...column,
-    tasks: selectTasksByColumn(state, column.id).sort((a, b) => a.order - b.order)
-  }));
-  
-  return {
-    ...board,
-    columns: columnsWithTasks
-  };
-};
+// selectBoardWithColumnsAndTasks создает новый объект и массивы, его нужно мемоизировать!
+const selectBoardIdArg = (state, boardId) => boardId;
+const selectAllColumnsForBoard = createSelector(
+  [selectAllColumns, selectBoardIdArg],
+  (columns, boardId) => columns
+    .filter(column => column.boardId === boardId)
+    .sort((a, b) => a.order - b.order)
+);
+
+export const selectBoardWithColumnsAndTasks = createSelector(
+  [
+    (state, boardId) => selectBoardById(state, boardId) || selectCurrentBoard(state), // Используем существующие селекторы
+    selectAllColumnsForBoard, // Используем мемоизированный селектор колонок
+    selectTasksState // Используем базовый селектор задач
+  ],
+  (board, columns, allTasks) => { // Функция-результат
+    if (!board) return null;
+
+    const columnsWithTasks = columns.map(column => ({
+      ...column,
+      // Используем мемоизированный selectTasksByColumn внутри, передавая state и column.id
+      // Но лучше напрямую использовать allTasks, которые уже переданы
+      tasks: (allTasks[column.id] || []).sort((a, b) => a.order - b.order)
+    }));
+
+    return {
+      ...board,
+      columns: columnsWithTasks
+    };
+  }
+);
