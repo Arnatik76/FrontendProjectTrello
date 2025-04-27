@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { DndProvider } from 'react-dnd'; // Добавьте, если ещё не импортировано
+import { HTML5Backend } from 'react-dnd-html5-backend'; // Добавьте, если ещё не импортировано
 import Column from "./Column";
 import ThemeToggle from "./ThemeToggle";
 import {
@@ -102,10 +104,11 @@ function Board({ onNavigateHome, boardId }) {
 
       <div className="board-content">
         {areColumnsLoading && columns.length === 0 && <div className="loading">Loading columns...</div>}
-        {columns.map(column => (
+        {columns.map((column, index) => (
           <Column
             key={column.id}
             column={column}
+            index={index} // Передаем индекс для DnD
           />
         ))}
 

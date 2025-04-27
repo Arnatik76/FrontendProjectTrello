@@ -1,0 +1,147 @@
+/* filepath: c:\Users\Arnat\Documents\GitHub\FrontendProjectTrello\trello\src\components\Column.module.css */
+.column {
+  /* Стили для колонки */
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  min-width: 280px;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 120px); /* Примерная высота */
+  margin: 0 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.columnHeader {
+  /* Стили для заголовка */
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.columnTitleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.columnTitle {
+    cursor: pointer;
+    flex-grow: 1;
+    margin-right: 8px; /* Добавим отступ */
+    word-break: break-word; /* Перенос длинных слов */
+}
+
+.columnActions {
+    display: flex;
+    gap: 4px; /* Пространство между кнопками */
+    flex-shrink: 0; /* Предотвратить сжатие кнопок */
+}
+
+.editColumnBtn,
+.deleteColumnBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+.editColumnBtn:hover,
+.deleteColumnBtn:hover {
+    color: var(--text-primary);
+}
+
+
+.columnCards {
+  /* Стили для контейнера карточек */
+  padding: 0.5rem;
+  overflow-y: auto; /* Добавляем скролл для карточек */
+  flex-grow: 1;
+}
+
+.addTaskForm {
+  /* Стили для формы добавления задачи */
+  padding: 0.5rem 1rem 1rem;
+}
+
+.addTaskForm textarea {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    min-height: 60px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.5rem;
+    resize: vertical; /* Разрешить изменять размер по вертикали */
+}
+
+.formButtons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.formButtons button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.formButtons button[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+.formButtons button[type="submit"]:disabled {
+    background-color: var(--disabled-color);
+    cursor: not-allowed;
+}
+
+.formButtons button[type="button"] {
+    background-color: transparent;
+    border: none;
+    color: var(--text-secondary);
+}
+ .formButtons button[type="button"]:hover {
+    background-color: var(--hover-bg-color);
+ }
+
+
+.addCardButton {
+  /* Стили для кнопки добавления карточки */
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 0 0 8px 8px; /* Скругляем только нижние углы */
+  transition: background-color 0.2s ease;
+}
+
+.addCardButton:hover {
+  background-color: var(--hover-bg-color);
+  color: var(--text-primary);
+}
+.addCardButton:disabled {
+    color: var(--disabled-color);
+    cursor: not-allowed;
+    background-color: transparent;
+}
+
+/* Стили для формы редактирования заголовка колонки */
+.columnHeader form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.columnHeader form input {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid var(--primary-color); /* Выделяем поле ввода */
+    border-radius: 4px;
+}

@@ -1,0 +1,101 @@
+.taskCard { /* Переименовываем классы в camelCase для удобства в JS */
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 0.8rem; /* Используйте значение из App.css */
+  padding: 0.8rem; /* Используйте значение из App.css */
+  box-shadow: 0 1px 3px var(--shadow-color);
+  cursor: pointer; /* Или grab/grabbing в зависимости от DnD */
+  transition: background-color 0.2s ease, border-color 0.2s ease; /* Добавим плавности */
+}
+
+.taskCard.dragging { /* Можно оставить как есть или использовать :global() если нужно */
+  /* Стили для перетаскиваемой карточки, например: */
+  opacity: 0.5;
+  background-color: var(--accent-color);
+  border-color: var(--accent-hover);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardText {
+  margin-bottom: 0.5rem;
+  word-wrap: break-word; /* Предотвращение выхода текста за границы */
+  cursor: pointer; /* Указываем, что текст кликабельный для редактирования */
+}
+
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  opacity: 0; /* Скрываем по умолчанию */
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Показываем кнопки при наведении на карточку */
+.taskCard:hover .cardActions {
+  opacity: 1;
+}
+
+.editTaskBtn,
+.deleteTaskBtn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.7rem;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px; /* Добавим скругление */
+  cursor: pointer;
+}
+
+.editTaskBtn:hover,
+.deleteTaskBtn:hover {
+   filter: brightness(0.9); /* Небольшое затемнение при наведении */
+}
+
+.deleteTaskBtn {
+  background-color: var(--danger-bg, #fee2e2); /* Используем переменную или дефолт */
+  color: var(--danger-text, #b91c1c);
+  border-color: var(--danger-border, var(--border-color)); /* Можно добавить отдельную переменную */
+}
+
+ .deleteTaskBtn:hover {
+   background-color: var(--danger-hover-bg, #fecaca);
+   filter: none; /* Убираем brightness для кнопки удаления */
+}
+
+/* Стили для формы редактирования */
+.editForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.editForm textarea {
+    width: 100%;
+    min-height: 60px;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.4rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical; /* Разрешаем изменять размер по вертикали */
+    background-color: var(--bg-primary); /* Фон как у страницы */
+    color: var(--text-primary);
+}
+
+.formButtons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start; /* Кнопки слева */
+}
+
+.formButtons button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}

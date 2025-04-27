@@ -1,15 +1,24 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import { useDrop, useDrag } from 'react-dnd'; // Добавляем useDrag
 import Task from "./Task";
 import {
   updateColumn,
-  deleteColumn
+  deleteColumn,
+  reorderColumnOptimistic, // Будем добавлять в columnsSlice
+  persistColumnOrder // Будем добавлять в columnsSlice
 } from "../store/slices/columnsSlice";
-import { createTask } from "../store/slices/tasksSlice";
+import { createTask, moveTask } from "../store/slices/tasksSlice";
 import { selectTasksByColumn, selectTasksStatus, selectColumnsStatus } from "../store/selectors";
 
-function Column({ column }) {
+const ItemTypes = {
+  TASK: 'task',
+  COLUMN: 'column' // Добавляем тип для колонок
+};
+
+function Column({ column, index }) { // Добавляем index для определения позиции колонки
   const dispatch = useDispatch();
+  const ref = useRef(null); // Ref для DOM-элемента колонки
 
   const tasks = useSelector(state => selectTasksByColumn(state, column.id));
   const tasksStatus = useSelector(selectTasksStatus);
@@ -19,6 +28,99 @@ function Column({ column }) {
   const [editTitle, setEditTitle] = useState(column.title);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskContent, setNewTaskContent] = useState("");
+
+  // --- React DnD для задач ---
+  const [{ isOver, canDrop }, dropTask] = useDrop(() => ({
+    accept: ItemTypes.TASK,
+    drop: (item, monitor) => {
+      if (item.columnId !== column.id) {
+        const newOrder = tasks.length;
+        dispatch(moveTask({
+          taskId: item.id,
+          targetColumnId: column.id,
+          order: newOrder,
+        }));
+      }
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+      canDrop: !!monitor.canDrop(),
+    }),
+  }), [column.id, tasks.length, dispatch]);
+
+  // --- React DnD для колонок ---
+  const [{ isDragging }, dragColumn] = useDrag(() => ({
+    type: ItemTypes.COLUMN,
+    item: { id: column.id, index, order: column.order },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }), [column.id, index, column.order]);
+
+  // --- React DnD для перетаскивания колонок ---
+  const [, dropColumn] = useDrop(() => ({
+    accept: ItemTypes.COLUMN,
+    hover(item, monitor) {
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      // Не перемещаем элемент, если он находится над собой
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // Получаем размеры элемента
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      
+      // Горизонтальный центр
+      const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+      
+      // Позиция указателя мыши
+      const clientOffset = monitor.getClientOffset();
+      
+      // Получаем расстояние от левого края
+      const hoverClientX = clientOffset.x - hoverBoundingRect.left;
+
+      // Перемещаем только когда мышь пересекла половину ширины
+      // Когда двигаемся слева - мышь должна быть левее середины
+      // Когда справа - мышь должна быть правее середины
+      
+      // Перетаскивание слева направо
+      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+        return;
+      }
+
+      // Перетаскивание справа налево
+      if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+        return;
+      }
+
+      // Выполняем оптимистичное обновление порядка колонок в Redux
+      dispatch(reorderColumnOptimistic({
+        draggedId: item.id,
+        hoveredId: column.id
+      }));
+
+      // Обновляем индекс элемента для более плавного перетаскивания
+      item.index = hoverIndex;
+    },
+    drop: () => {
+      // Сохраняем изменения порядка колонок на сервере
+      dispatch(persistColumnOrder());
+    }
+  }), [index, column.id, dispatch]);
+
+  // Объединяем drag и drop для колонок
+  dragColumn(dropColumn(ref));
+  
+  // Объединяем ref для перетаскивания колонки и приема задач
+  const columnRef = (el) => {
+    ref.current = el; // Сохраняем ссылку на элемент колонки
+    dropTask(el); // Применяем dropTask к элементу колонки
+  };
 
   const isColumnUpdating = columnsStatus === 'loading';
   const isTaskCreating = tasksStatus === 'loading';
@@ -43,13 +145,10 @@ function Column({ column }) {
 
   const handleAddTask = (e) => {
     e.preventDefault();
-    console.log("handleAddTask called. Content:", newTaskContent, "Is loading:", isTaskCreating); // Добавлено
     if (!newTaskContent.trim()) {
-      console.log("Content is empty. Aborting."); // Добавлено
       return; 
     }
 
-    console.log("Dispatching createTask..."); // Добавлено
     dispatch(createTask({
       columnId: column.id,
       content: newTaskContent,
@@ -76,8 +175,15 @@ function Column({ column }) {
      setNewTaskContent("");
   };
 
+  // Определяем стиль для колонки (включая эффекты перетаскивания)
+  const columnStyle = {
+    backgroundColor: isOver && canDrop ? 'rgba(0, 255, 0, 0.1)' : 'var(--bg-secondary)',
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'move',
+  };
+
   return (
-    <div className="column">
+    <div ref={columnRef} className="column" style={columnStyle}>
       <div className="column-header">
         {isEditing ? (
           <form onSubmit={handleEditSubmit}>
@@ -130,6 +236,9 @@ function Column({ column }) {
             task={task}
           />
         ))}
+        {isOver && canDrop && tasks.length === 0 && (
+            <div style={{ height: '50px', backgroundColor: 'rgba(0,0,0,0.1)', margin: '0.5rem', borderRadius: '4px' }}>Drop here</div>
+        )}
       </div>
 
       {isAddingTask ? (

@@ -34,6 +34,33 @@ export const deleteColumn = createAsyncThunk('columns/deleteColumn', async (colu
   }
 });
 
+// Новый thunk для сохранения порядка колонок
+export const persistColumnOrder = createAsyncThunk(
+  'columns/persistOrder',
+  async (_, { getState, rejectWithValue }) => {
+    const state = getState();
+    const columns = state.columns.columns;
+    
+    if (!columns || columns.length === 0) {
+      return;
+    }
+    
+    try {
+      // Создаем массив промисов для обновления каждой колонки
+      const updatePromises = columns.map((column, index) => 
+        api.updateColumn(column.id, { ...column, order: index })
+      );
+      
+      // Дожидаемся выполнения всех запросов
+      await Promise.all(updatePromises);
+      return columns;
+    } catch (error) {
+      console.error("Failed to persist column order:", error);
+      return rejectWithValue(error.message || 'Failed to save column order');
+    }
+  }
+);
+
 const initialState = {
   columns: [],
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
@@ -43,10 +70,31 @@ const initialState = {
 const columnsSlice = createSlice({
   name: 'columns',
   initialState,
-  reducers: {},
+  reducers: {
+    // Добавляем редьюсер для оптимистичного обновления порядка колонок
+    reorderColumnOptimistic: (state, action) => {
+      const { draggedId, hoveredId } = action.payload;
+      const dragIndex = state.columns.findIndex(column => column.id === draggedId);
+      const hoverIndex = state.columns.findIndex(column => column.id === hoveredId);
+      
+      if (dragIndex === -1 || hoverIndex === -1 || dragIndex === hoverIndex) {
+        return; // Не найдены колонки или индексы совпадают
+      }
+      
+      // Удаляем перетаскиваемую колонку из массива
+      const [draggedColumn] = state.columns.splice(dragIndex, 1);
+      
+      // Вставляем ее на новое место
+      state.columns.splice(hoverIndex, 0, draggedColumn);
+      
+      // Обновляем порядок всех колонок
+      state.columns.forEach((column, index) => {
+        column.order = index;
+      });
+    }
+  },
   extraReducers: (builder) => {
     builder
-
       // fetchColumns
       .addCase(fetchColumns.pending, (state) => {
         state.status = 'loading';
@@ -103,8 +151,23 @@ const columnsSlice = createSlice({
       .addCase(deleteColumn.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
+      })
+      
+      // persistColumnOrder
+      .addCase(persistColumnOrder.pending, (state) => {
+        // Можно также установить статус 'loading' здесь, если нужно
+      })
+      .addCase(persistColumnOrder.fulfilled, (state) => {
+        // Порядок колонок уже обновлен в оптимистичном редьюсере
+        console.log("Column order persisted successfully");
+      })
+      .addCase(persistColumnOrder.rejected, (state, action) => {
+        state.error = action.payload;
+        console.error("Error persisting column order:", action.payload);
+        // Можно было бы добавить здесь код для отката изменений
       });
   },
 });
 
+export const { reorderColumnOptimistic } = columnsSlice.actions;
 export default columnsSlice.reducer;
