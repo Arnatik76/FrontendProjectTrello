@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, selectAuthStatus, selectAuthError } from '../store/slices/authSlice';
-import styles from './Auth.module.css'; // Импортируем CSS модуль
+import ThemeToggle from '../components/ThemeToggle'; // Add this import
+import styles from './Auth.module.css';
 
 function LoginForm() {
   const dispatch = useDispatch();
@@ -17,12 +18,11 @@ function LoginForm() {
     e.preventDefault();
     try {
       await dispatch(loginUser({ email, password })).unwrap();
-      console.log('Login successful, navigating to /'); // <--- Добавить лог
-      navigate('/'); // <--- Убедитесь, что этот вызов есть
-      console.log('Navigation called'); // <--- Добавить лог
+      console.log('Login successful, navigating to /');
+      navigate('/');
+      console.log('Navigation called');
     } catch (err) {
       console.error('Login failed:', err);
-      // Обработка ошибки входа
     }
   };
 
@@ -30,6 +30,9 @@ function LoginForm() {
 
   return (
     <div className={styles.authContainer}>
+      <div className={styles.themeToggleWrapper}>
+        <ThemeToggle />
+      </div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit} className={styles.authForm}>
         {authError && <div className={styles.errorMessage}>{authError}</div>}
