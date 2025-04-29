@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, selectAuthStatus, selectAuthError } from '../store/slices/authSlice';
-import ThemeToggle from '../components/ThemeToggle'; // Add this import
+import ThemeToggle from '../components/ThemeToggle';
 import styles from './Auth.module.css';
 
 function LoginForm() {
@@ -20,9 +20,9 @@ function LoginForm() {
       await dispatch(loginUser({ email, password })).unwrap();
       console.log('Login successful, navigating to /');
       navigate('/');
-      console.log('Navigation called');
     } catch (err) {
       console.error('Login failed:', err);
+      // No need to set local state for errors as Redux handles it
     }
   };
 
@@ -35,7 +35,13 @@ function LoginForm() {
       </div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit} className={styles.authForm}>
-        {authError && <div className={styles.errorMessage}>{authError}</div>}
+        {authError && (
+          <div className={styles.errorMessage}>
+            {typeof authError === 'string' 
+              ? authError 
+              : authError.message || 'Login failed. Please check your credentials.'}
+          </div>
+        )}
         <div className={styles.formGroup}>
           <label htmlFor="email">Email</label>
           <input
