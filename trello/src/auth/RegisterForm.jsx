@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser, selectAuthStatus, selectAuthError } from '../store/slices/authSlice';
-import styles from './Auth.module.css'; // Импортируем CSS модуль
+import ThemeToggle from '../components/ThemeToggle'; // Add this import
+import styles from './Auth.module.css';
 
 function RegisterForm() {
   const dispatch = useDispatch();
@@ -12,23 +13,18 @@ function RegisterForm() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState(''); // Добавим поле для имени, если нужно
+  const [name, setName] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password || !name) return; // Проверка на пустые поля
+    if (!email || !password || !name) return;
 
     try {
-      // Используем .unwrap() для упрощения обработки успеха/ошибки
       await dispatch(registerUser({ name, email, password })).unwrap();
-      // При успехе - переходим на страницу логина
-      alert('Registration successful! Please log in.'); // Опционально: сообщение пользователю
-      navigate('/login'); // <--- ИЗМЕНЕНО ЗДЕСЬ
+      alert('Registration successful! Please log in.');
+      navigate('/login');
     } catch (rejectedValueOrSerializedError) {
-      // Ошибка будет поймана здесь и уже обработана в rejectWithValue
-      // authError из useSelector обновится автоматически
       console.error('Registration failed:', rejectedValueOrSerializedError);
-      // Можно добавить дополнительное уведомление, если нужно, но authError уже должен отображаться
     }
   };
 
@@ -36,6 +32,9 @@ function RegisterForm() {
 
   return (
     <div className={styles.authContainer}>
+      <div className={styles.themeToggleWrapper}>
+        <ThemeToggle />
+      </div>
       <h2>Register</h2>
       <form onSubmit={handleSubmit} className={styles.authForm}>
         {authError && <div className={styles.errorMessage}>
