@@ -92,6 +92,15 @@
   border: 1px solid #e0e3e8;
   border-radius: 4px;
   font-size: 14px;
+  height: 56px;
+  box-sizing: border-box;
+}
+
+.createBoardForm button {
+  padding: 0.5rem 1rem;
+  height: 56px;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .createBoardForm input:focus {
