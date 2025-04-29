@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, selectAuthStatus, selectAuthError } from '../store/slices/authSlice';
+import styles from './Auth.module.css'; // Импортируем CSS модуль
 
 function LoginForm() {
   const dispatch = useDispatch();
@@ -28,11 +29,11 @@ function LoginForm() {
   const isLoading = authStatus === 'loading';
 
   return (
-    <div className="auth-container">
+    <div className={styles.authContainer}>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} className="auth-form">
-        {authError && <div className="error-message">{authError}</div>}
-        <div className="form-group">
+      <form onSubmit={handleSubmit} className={styles.authForm}>
+        {authError && <div className={styles.errorMessage}>{authError}</div>}
+        <div className={styles.formGroup}>
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -43,7 +44,7 @@ function LoginForm() {
             disabled={isLoading}
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="password">Password</label>
           <input
             type="password"

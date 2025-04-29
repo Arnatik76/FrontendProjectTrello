@@ -1,147 +1,267 @@
 /* filepath: c:\Users\Arnat\Documents\GitHub\FrontendProjectTrello\trello\src\components\Column.module.css */
+:root {
+  --column-width: 280px;
+  --column-bg: #f1f2f4;
+  --column-border: #dfe1e6;
+  --column-shadow: rgba(9, 30, 66, 0.13);
+  --column-header-bg: #ebecf0;
+  --title-color: #172b4d;
+  --text-secondary: #5e6c84;
+  --add-button-hover: rgba(9, 30, 66, 0.08);
+  --primary-button: #0079bf;
+  --primary-button-hover: #026aa7;
+  --primary-button-text: #fff;
+  --form-shadow: rgba(9, 30, 66, 0.25);
+  --card-hover: rgba(9, 30, 66, 0.04);
+}
+
 .column {
-  /* Стили для колонки */
-  background-color: var(--bg-secondary);
-  border-radius: 8px;
-  min-width: 280px;
-  max-width: 300px;
+  width: var(--column-width);
+  background-color: var(--column-bg);
+  border-radius: 12px;
+  margin-right: 16px;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 120px); /* Примерная высота */
-  margin: 0 0.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  min-height: 120px;
+  max-height: fit-content;
+  box-shadow: 0 2px 4px var(--column-shadow);
+  border: 1px solid var(--column-border);
+  transition: box-shadow 0.15s ease;
+}
+
+.column:hover {
+  box-shadow: 0 4px 8px var(--column-shadow);
 }
 
 .columnHeader {
-  /* Стили для заголовка */
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color);
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--column-header-bg);
+  border-bottom: 1px solid var(--column-border);
+  border-radius: 12px 12px 0 0;
+  position: relative;
 }
 
 .columnTitleContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .columnTitle {
-    cursor: pointer;
-    flex-grow: 1;
-    margin-right: 8px; /* Добавим отступ */
-    word-break: break-word; /* Перенос длинных слов */
-}
-
-.columnActions {
-    display: flex;
-    gap: 4px; /* Пространство между кнопками */
-    flex-shrink: 0; /* Предотвратить сжатие кнопок */
-}
-
-.editColumnBtn,
-.deleteColumnBtn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-}
-.editColumnBtn:hover,
-.deleteColumnBtn:hover {
-    color: var(--text-primary);
-}
-
-
-.columnCards {
-  /* Стили для контейнера карточек */
-  padding: 0.5rem;
-  overflow-y: auto; /* Добавляем скролл для карточек */
-  flex-grow: 1;
-}
-
-.addTaskForm {
-  /* Стили для формы добавления задачи */
-  padding: 0.5rem 1rem 1rem;
-}
-
-.addTaskForm textarea {
-    width: 100%;
-    margin-bottom: 0.5rem;
-    min-height: 60px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 0.5rem;
-    resize: vertical; /* Разрешить изменять размер по вертикали */
-}
-
-.formButtons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.formButtons button {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.formButtons button[type="submit"] {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-}
-.formButtons button[type="submit"]:disabled {
-    background-color: var(--disabled-color);
-    cursor: not-allowed;
-}
-
-.formButtons button[type="button"] {
-    background-color: transparent;
-    border: none;
-    color: var(--text-secondary);
-}
- .formButtons button[type="button"]:hover {
-    background-color: var(--hover-bg-color);
- }
-
-
-.addCardButton {
-  /* Стили для кнопки добавления карточки */
-  background-color: transparent;
-  border: none;
-  color: var(--text-secondary);
-  padding: 0.75rem 1rem;
-  text-align: left;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--title-color);
   cursor: pointer;
-  border-radius: 0 0 8px 8px; /* Скругляем только нижние углы */
+  flex-grow: 1;
+  margin-right: 8px;
+  word-break: break-word;
+  padding: 4px;
+  border-radius: 4px;
   transition: background-color 0.2s ease;
 }
 
-.addCardButton:hover {
-  background-color: var(--hover-bg-color);
-  color: var(--text-primary);
-}
-.addCardButton:disabled {
-    color: var(--disabled-color);
-    cursor: not-allowed;
-    background-color: transparent;
+.columnTitle:hover {
+  background-color: rgba(9, 30, 66, 0.04);
 }
 
-/* Стили для формы редактирования заголовка колонки */
+.columnActions {
+  display: flex;
+  gap: 8px;
+  /* Remove opacity: 0 to always show buttons */
+  transition: opacity 0.2s ease;
+}
+
+/* Make buttons visually subtle by default, but clearly visible */
+.editColumnBtn,
+.deleteColumnBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  opacity: 0.7; /* Slightly faded by default */
+}
+
+/* Emphasize buttons on hover */
+.editColumnBtn:hover,
+.deleteColumnBtn:hover {
+  background-color: rgba(9, 30, 66, 0.08);
+  color: var(--title-color);
+  opacity: 1;
+}
+
+.deleteColumnBtn:hover {
+  color: #c92a2a;
+}
+
+.columnCards {
+  padding: 8px;
+  overflow-y: auto;
+  flex-grow: 1;
+  min-height: 50px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .columnHeader form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .columnHeader form input {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    border: 1px solid var(--primary-color); /* Выделяем поле ввода */
-    border-radius: 4px;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 2px solid var(--primary-button);
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
+}
+
+.formButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.formButtons button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+}
+
+.formButtons button[type="submit"] {
+  background-color: var(--primary-button);
+  color: var(--primary-button-text);
+  border: none;
+}
+
+.formButtons button[type="submit"]:hover:not(:disabled) {
+  background-color: var(--primary-button-hover);
+}
+
+.formButtons button[type="submit"]:disabled {
+  background-color: rgba(0, 121, 191, 0.5);
+  cursor: not-allowed;
+}
+
+.formButtons button[type="button"] {
+  background-color: rgba(9, 30, 66, 0.04);
+  border: none;
+  color: var(--text-secondary);
+}
+
+.formButtons button[type="button"]:hover {
+  background-color: rgba(9, 30, 66, 0.08);
+  color: var(--title-color);
+}
+
+.addTaskForm {
+  padding: 0 8px 8px 8px;
+}
+
+.addTaskForm textarea {
+  width: 100%;
+  margin-bottom: 8px;
+  min-height: 60px;
+  border: 1px solid var(--column-border);
+  border-radius: 4px;
+  padding: 8px;
+  resize: vertical;
+  font-family: inherit;
+  box-shadow: 0 1px 2px var(--column-shadow);
+}
+
+.addTaskForm textarea:focus {
+  border-color: var(--primary-button);
+  box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
+  outline: none;
+}
+
+.addCardButton {
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 0 0 12px 12px;
+  transition: background-color 0.2s ease;
+  margin: 4px 8px 8px 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.addCardButton::before {
+  content: '+';
+  margin-right: 4px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.addCardButton:hover {
+  background-color: var(--add-button-hover);
+  color: var(--title-color);
+}
+
+.addCardButton:disabled {
+  color: rgba(94, 108, 132, 0.5);
+  cursor: not-allowed;
+  background-color: transparent;
+}
+
+/* Empty column placeholder */
+.columnCards:empty::after {
+  content: 'No cards yet';
+  display: block;
+  color: var(--text-secondary);
+  padding: 16px 8px;
+  text-align: center;
+  font-style: italic;
+  border: 2px dashed rgba(9, 30, 66, 0.08);
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+/* Drop area styling */
+.columnCards > div[style*="backgroundColor: rgba(0,0,0,0.1)"] {
+  background-color: rgba(0, 121, 191, 0.1) !important;
+  border: 2px dashed rgba(0, 121, 191, 0.4) !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--text-secondary) !important;
+  font-style: italic !important;
+}
+
+.dragging {
+  opacity: 0.5 !important;
+}
+
+.dropTarget {
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+.dropPlaceholder {
+  height: 50px;
+  background-color: rgba(0, 121, 191, 0.1);
+  margin: 0.5rem;
+  border-radius: 4px;
+  border: 2px dashed rgba(0, 121, 191, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-style: italic;
 }

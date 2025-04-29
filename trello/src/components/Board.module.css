@@ -1,0 +1,335 @@
+:root {
+  --board-bg: #f9fafc;
+  --board-dark-bg: #1d2125;
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --header-dark-bg: rgba(0, 0, 0, 0.2);
+  --header-border: #e1e4e8;
+  --header-box-shadow: rgba(9, 30, 66, 0.08);
+  --text-primary: #172b4d;
+  --text-secondary: #5e6c84;
+  --text-primary-dark: #e9eaed;
+  --text-secondary-dark: #9fadbc;
+  --btn-primary: #0079bf;
+  --btn-primary-hover: #026aa7;
+  --btn-primary-text: #ffffff;
+  --btn-secondary: rgba(9, 30, 66, 0.04);
+  --btn-secondary-hover: rgba(9, 30, 66, 0.08);
+  --error-bg: #fee2e2;
+  --error-border: #f87171;
+  --error-text: #b91c1c;
+}
+
+.boardContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--board-bg);
+  overflow: hidden;
+}
+
+/* Board header with navigation and actions */
+.boardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: 0 1px 3px var(--header-box-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.boardTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+  flex-grow: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 16px;
+}
+
+.backButton {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: var(--btn-secondary);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.backButton:before {
+  content: "←";
+  font-size: 16px;
+}
+
+.backButton:hover {
+  background-color: var(--btn-secondary-hover);
+  color: var(--text-primary);
+}
+
+.headerActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.refreshButton {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: var(--btn-secondary);
+  color: var(--text-secondary);
+  border: none;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.refreshButton:hover:not(:disabled) {
+  background-color: var(--btn-secondary-hover);
+  color: var(--text-primary);
+}
+
+.refreshButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Board content area */
+.boardContent {
+  display: flex;
+  flex-grow: 1;
+  padding: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  align-items: flex-start;
+  height: calc(100vh - 60px);
+}
+
+/* Scrollbar styling for the board content */
+.boardContent::-webkit-scrollbar {
+  height: 12px;
+}
+
+.boardContent::-webkit-scrollbar-track {
+  background: rgba(9, 30, 66, 0.05);
+  border-radius: 12px;
+}
+
+.boardContent::-webkit-scrollbar-thumb {
+  background: rgba(9, 30, 66, 0.2);
+  border-radius: 12px;
+  border: 3px solid var(--board-bg);
+}
+
+.boardContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(9, 30, 66, 0.3);
+}
+
+/* Add column form */
+.addColumnForm {
+  width: 280px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(9, 30, 66, 0.2);
+  margin-right: 16px;
+  height: fit-content;
+  border: 1px solid var(--header-border);
+}
+
+.addColumnForm input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid var(--btn-primary);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.addColumnForm input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
+}
+
+.formButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.formButtons button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.formButtons button[type="submit"] {
+  background-color: var(--btn-primary);
+  color: var(--btn-primary-text);
+}
+
+.formButtons button[type="submit"]:hover:not(:disabled) {
+  background-color: var(--btn-primary-hover);
+}
+
+.formButtons button[type="submit"]:disabled {
+  background-color: rgba(0, 121, 191, 0.5);
+  cursor: not-allowed;
+}
+
+.formButtons button[type="button"] {
+  background-color: var(--btn-secondary);
+  color: var(--text-secondary);
+}
+
+.formButtons button[type="button"]:hover:not(:disabled) {
+  background-color: var(--btn-secondary-hover);
+  color: var(--text-primary);
+}
+
+/* Add column button */
+.addColumn {
+  min-width: 280px;
+  height: fit-content;
+}
+
+.addColumnButton {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px dashed var(--header-border);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 500;
+  padding: 12px 16px;
+  text-align: left;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.addColumnButton:hover:not(:disabled) {
+  background-color: #ffffff;
+  border-color: var(--btn-primary);
+  color: var(--btn-primary);
+  box-shadow: 0 2px 4px rgba(9, 30, 66, 0.1);
+}
+
+.addColumnButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error and loading states */
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--board-bg);
+  padding: 24px;
+}
+
+.errorMessage {
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-weight: 500;
+  max-width: 500px;
+  text-align: center;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  min-width: 280px;
+  margin-right: 16px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .boardContainer {
+    background-color: var(--board-dark-bg);
+  }
+  
+  .boardHeader {
+    background-color: var(--header-dark-bg);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .boardTitle {
+    color: var(--text-primary-dark);
+  }
+  
+  .addColumnButton {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-secondary-dark);
+  }
+  
+  .addColumnButton:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--btn-primary);
+  }
+  
+  .boardContent::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .boardContent::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid var(--board-dark-bg);
+  }
+  
+  .boardContent::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .boardHeader {
+    padding: 8px 12px;
+    flex-wrap: wrap;
+  }
+  
+  .boardTitle {
+    font-size: 18px;
+    width: 100%;
+    order: -1;
+    text-align: left;
+    margin-bottom: 8px;
+  }
+  
+  .boardContent {
+    padding: 12px 8px;
+  }
+}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser, selectAuthStatus, selectAuthError } from '../store/slices/authSlice';
+import styles from './Auth.module.css'; // Импортируем CSS модуль
 
 function RegisterForm() {
   const dispatch = useDispatch();
@@ -34,12 +35,13 @@ function RegisterForm() {
   const isLoading = authStatus === 'loading';
 
   return (
-    <div className="auth-container">
+    <div className={styles.authContainer}>
       <h2>Register</h2>
-      <form onSubmit={handleSubmit} className="auth-form">
-        {/* Отображаем ошибку из состояния Redux */}
-        {authError && <div className="error-message">{typeof authError === 'string' ? authError : authError.message || 'Registration failed'}</div>}
-        <div className="form-group">
+      <form onSubmit={handleSubmit} className={styles.authForm}>
+        {authError && <div className={styles.errorMessage}>
+          {typeof authError === 'string' ? authError : authError.message || 'Registration failed'}
+        </div>}
+        <div className={styles.formGroup}>
           <label htmlFor="name">Name</label>
           <input
             type="text"
@@ -50,7 +52,7 @@ function RegisterForm() {
             disabled={isLoading}
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -61,7 +63,7 @@ function RegisterForm() {
             disabled={isLoading}
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label htmlFor="password">Password</label>
           <input
             type="password"

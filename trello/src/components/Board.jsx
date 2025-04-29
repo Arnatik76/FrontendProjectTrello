@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { DndProvider } from 'react-dnd'; // Добавьте, если ещё не импортировано
-import { HTML5Backend } from 'react-dnd-html5-backend'; // Добавьте, если ещё не импортировано
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import Column from "./Column";
 import ThemeToggle from "./ThemeToggle";
+import styles from './Board.module.css'; // Import CSS module
 import {
   fetchBoardById
 } from "../store/slices/boardsSlice";
@@ -66,54 +67,54 @@ function Board({ onNavigateHome, boardId }) {
   const isLoading = isBoardLoading || areColumnsLoading || areTasksLoading;
 
   if (isBoardLoading && !board) {
-    return <div className="loading">Loading board...</div>;
+    return <div className={styles.loading}>Loading board...</div>;
   }
 
   if (boardError && !board) {
     return (
-      <div className="error-container">
-        <div className="error-message">Error loading board: {boardError}</div>
-        <button onClick={onNavigateHome}>Back to Home</button>
+      <div className={styles.errorContainer}>
+        <div className={styles.errorMessage}>Error loading board: {boardError}</div>
+        <button className={styles.backButton} onClick={onNavigateHome}>Back to Home</button>
       </div>
     );
   }
 
   if (boardStatus === 'succeeded' && !board) {
      return (
-       <div className="error-container">
-         <div className="error-message">Board not found.</div>
-         <Link to="/" className="back-button">Back to Boards</Link>
+       <div className={styles.errorContainer}>
+         <div className={styles.errorMessage}>Board not found.</div>
+         <Link to="/" className={styles.backButton}>Back to Boards</Link>
        </div>
      );
   }
 
   return (
-    <div className="board-container">
-      <div className="board-header">
-        <Link to="/" className="back-button">Back to Boards</Link>
-        <h1 style={{ color: "var(--text-primary)" }}>{board?.name || (isBoardLoading ? "Loading..." : "Board")}</h1>
-        <div className="header-actions">
+    <div className={styles.boardContainer}>
+      <div className={styles.boardHeader}>
+        <Link to="/" className={styles.backButton}>Back to Boards</Link>
+        <h1 className={styles.boardTitle}>{board?.name || (isBoardLoading ? "Loading..." : "Board")}</h1>
+        <div className={styles.headerActions}>
           <ThemeToggle />
-          <button onClick={refresh} className="refresh-button" disabled={isLoading}>
+          <button onClick={refresh} className={styles.refreshButton} disabled={isLoading}>
             {isLoading ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
       </div>
 
-      {error && !boardError && <div className="error-message">Error: {error}</div>}
+      {error && !boardError && <div className={styles.errorMessage}>Error: {error}</div>}
 
-      <div className="board-content">
-        {areColumnsLoading && columns.length === 0 && <div className="loading">Loading columns...</div>}
+      <div className={styles.boardContent}>
+        {areColumnsLoading && columns.length === 0 && <div className={styles.loading}>Loading columns...</div>}
         {columns.map((column, index) => (
           <Column
             key={column.id}
             column={column}
-            index={index} // Передаем индекс для DnD
+            index={index}
           />
         ))}
 
         {isAddingColumn ? (
-          <div className="add-column-form">
+          <div className={styles.addColumnForm}>
             <form onSubmit={handleAddColumn}>
               <input
                 type="text"
@@ -123,7 +124,7 @@ function Board({ onNavigateHome, boardId }) {
                 autoFocus
                 disabled={columnsStatus === 'loading'}
               />
-              <div className="form-buttons">
+              <div className={styles.formButtons}>
                 <button type="submit" disabled={columnsStatus === 'loading' || !newColumnTitle.trim()}>
                   {columnsStatus === 'loading' ? 'Adding...' : 'Add Column'}
                 </button>
@@ -141,9 +142,9 @@ function Board({ onNavigateHome, boardId }) {
             </form>
           </div>
         ) : (
-          <div className="add-column">
+          <div className={styles.addColumn}>
             <button
-              className="add-column-button"
+              className={styles.addColumnButton}
               onClick={() => setIsAddingColumn(true)}
               disabled={isLoading}
             >
