@@ -2,16 +2,25 @@
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #ffffff;
+  background-color: var(--bg-secondary);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(9, 30, 66, 0.15);
-  border: 1px solid #e0e3e8;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  border: 1px solid var(--border-color);
+  position: relative;
+  color: var(--text-primary);
+}
+
+/* Add this new style for the theme toggle positioning */
+.themeToggleWrapper {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 
 .authContainer h2 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #172b4d;
+  color: var(--text-primary);
 }
 
 .authForm {
@@ -28,22 +37,24 @@
 
 .formGroup label {
   font-weight: 500;
-  color: #5e6c84;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
 .formGroup input {
   padding: 0.75rem;
-  border: 1px solid #e0e3e8;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.2s ease;
+  background-color: var(--form-bg);
+  color: var(--text-primary);
 }
 
 .formGroup input:focus {
   outline: none;
-  border-color: #0079bf;
-  box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--focus-ring);
 }
 
 .authForm button {
