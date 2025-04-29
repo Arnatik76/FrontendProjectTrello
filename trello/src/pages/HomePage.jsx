@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ThemeToggle from "../components/ThemeToggle";
-import styles from './HomePage.module.css'; // Импортируем CSS модуль
+import styles from './HomePage.module.css';
 import {
   fetchBoards,
   createBoard,
@@ -74,7 +74,6 @@ function HomePage() {
       <div className={styles.boardHeader}>
         <h1 style={{ color: "var(--text-primary)" }}>My Boards</h1>
         <div className={styles.boardActions}>
-          {/* <button onClick={handleLogout} className={styles.editBoardBtn} disabled={isLoading}>Logout</button> */}
           <ThemeToggle />
         </div>
       </div>

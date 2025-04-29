@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useDrop, useDrag } from 'react-dnd';
 import Task from "./Task";
-import styles from './Column.module.css'; // <--- Импортируйте CSS модуль
+import styles from './Column.module.css';
 import {
   updateColumn,
   deleteColumn,
@@ -30,7 +30,6 @@ function Column({ column, index }) {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskContent, setNewTaskContent] = useState("");
 
-  // --- React DnD для задач ---
   const [{ isOver, canDrop }, dropTask] = useDrop(() => ({
     accept: ItemTypes.TASK,
     drop: (item, monitor) => {
@@ -49,7 +48,6 @@ function Column({ column, index }) {
     }),
   }), [column.id, tasks.length, dispatch]);
 
-  // --- React DnD для колонок ---
   const [{ isDragging }, dragColumn] = useDrag(() => ({
     type: ItemTypes.COLUMN,
     item: { id: column.id, index, order: column.order },
@@ -58,7 +56,6 @@ function Column({ column, index }) {
     }),
   }), [column.id, index, column.order]);
 
-  // --- React DnD для перетаскивания колонок ---
   const [, dropColumn] = useDrop(() => ({
     accept: ItemTypes.COLUMN,
     hover(item, monitor) {
@@ -142,7 +139,6 @@ function Column({ column, index }) {
   };
 
   return (
-    // Используем styles.column
     <div 
       ref={columnRef} 
       className={`
@@ -151,7 +147,6 @@ function Column({ column, index }) {
         ${isOver && canDrop ? styles.dropTarget : ''}
       `}
     >
-      {/* Используем styles.columnHeader */}
       <div className={styles.columnHeader}>
         {isEditing ? (
           <form onSubmit={handleEditSubmit}>
@@ -162,29 +157,22 @@ function Column({ column, index }) {
               autoFocus
               disabled={isColumnUpdating}
             />
-            {/* Используем styles.formButtons */}
             <div className={styles.formButtons}>
               <button type="submit" disabled={isColumnUpdating || !editTitle.trim() || editTitle === column.title}>Save</button>
               <button type="button" onClick={handleCancelEdit} disabled={isColumnUpdating}>Cancel</button>
             </div>
           </form>
         ) : (
-          // Используем styles.columnTitleContainer
           <div className={styles.columnTitleContainer}>
-            {/* Используем styles.columnTitle */}
             <span className={styles.columnTitle} onClick={() => setIsEditing(true)}>{column.title}</span>
-            {/* Используем styles.columnActions */}
             <div className={styles.columnActions}>
-              {/* Используем styles.editColumnBtn */}
               <button className={styles.editColumnBtn} onClick={() => setIsEditing(true)} disabled={isColumnUpdating}>Edit</button>
-              {/* Используем styles.deleteColumnBtn */}
               <button className={styles.deleteColumnBtn} onClick={handleDeleteColumn} disabled={isColumnUpdating}>Delete</button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Используем styles.columnCards */}
       <div className={styles.columnCards}>
         {tasksStatus === 'loading' && tasks.length === 0 && <div>Loading tasks...</div>}
         {tasks.map((task) => (
@@ -196,7 +184,6 @@ function Column({ column, index }) {
       </div>
 
       {isAddingTask ? (
-        // Используем styles.addTaskForm
         <div className={styles.addTaskForm}>
           <form onSubmit={handleAddTask}>
             <textarea
@@ -206,7 +193,6 @@ function Column({ column, index }) {
               autoFocus
               disabled={isTaskCreating}
             />
-            {/* Используем styles.formButtons */}
             <div className={styles.formButtons}>
               <button type="submit" disabled={isTaskCreating || !newTaskContent.trim()}>
                 {isTaskCreating ? 'Adding...' : 'Add Task'}
@@ -216,13 +202,12 @@ function Column({ column, index }) {
           </form>
         </div>
       ) : (
-        // Используем styles.addCardButton
         <button
           className={styles.addCardButton}
           onClick={() => setIsAddingTask(true)}
           disabled={isTaskCreating || isColumnUpdating}
         >
-          + Add a card
+          Add a card
         </button>
       )}
     </div>

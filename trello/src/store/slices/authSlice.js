@@ -1,70 +1,58 @@
-// filepath: c:\Users\Arnat\Documents\GitHub\FrontendProjectTrello\trello\src\store\slices\authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 
-// Thunk для регистрации
 export const registerUser = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
     try {
       const response = await api.register(userData);
-      return response; // Можно вернуть сообщение об успехе
+      return response; 
     } catch (error) {
       return rejectWithValue(error);
     }
   }
 );
 
-// Thunk для входа
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
       const userData = await api.login(credentials);
-      // Токен больше не сохраняется
-      // localStorage.removeItem('token'); // Убедимся, что старого токена нет
-      return userData; // Возвращаем данные пользователя
+      // localStorage.removeItem('token'); 
+      return userData; 
     } catch (error) {
       return rejectWithValue(error);
     }
   }
 );
 
-// Thunk для выхода
 export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      await api.logout(); // Вызываем API для завершения сессии на бэке
-      // Токен больше не удаляется из localStorage
+      await api.logout();
       // localStorage.removeItem('token');
-      // Диспатчим синхронный редьюсер для очистки состояния
       dispatch(authSlice.actions.logout());
     } catch (error) {
-       // Ошибка при вызове API logout не должна мешать выходу на фронте
        console.error("Logout failed but proceeding with frontend logout:", error);
-       dispatch(authSlice.actions.logout()); // Все равно выходим на фронте
-       // return rejectWithValue(error); // Не отклоняем, чтобы не показывать ошибку пользователю
+       dispatch(authSlice.actions.logout());
+       // return rejectWithValue(error); 
     }
   }
 );
 
 
-// Thunk для проверки текущей сессии
 export const checkAuth = createAsyncThunk(
   'auth/checkAuth',
   async (_, { rejectWithValue }) => {
-    // Токен больше не проверяется в localStorage
     // const token = localStorage.getItem('token');
     // if (!token) {
     //   return rejectWithValue('No token found');
     // }
     try {
-      // Запрос полагается на cookie сессии
       const userData = await api.getCurrentUser();
       return userData;
     } catch (error) {
-      // Если сессии нет или она невалидна, api.getCurrentUser вернет ошибку (например, 401)
       return rejectWithValue(error);
     }
   }
@@ -81,7 +69,6 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Синхронный редьюсер для выхода (вызывается из logoutUser thunk)
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
@@ -96,7 +83,7 @@ const authSlice = createSlice({
         state.status = 'loading'; state.error = null;
       })
       .addCase(registerUser.fulfilled, (state) => {
-        state.status = 'succeeded'; // Регистрация успешна, но пользователь еще не вошел
+        state.status = 'succeeded'; 
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = 'failed'; state.error = action.payload;
@@ -113,7 +100,6 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';
-        // Make sure the error is correctly formatted
         state.error = action.payload?.message || action.payload || action.error.message || 'Authentication failed';
         state.user = null;
         state.isAuthenticated = false;
@@ -130,21 +116,17 @@ const authSlice = createSlice({
       })
       .addCase(checkAuth.rejected, (state, action) => {
         state.status = 'failed';
-        // Не обязательно сохранять ошибку 'No session'
         // state.error = action.payload;
         state.user = null;
         state.isAuthenticated = false;
       })
-      // Logout thunk (только для обработки статуса pending/rejected, если нужно)
       .addCase(logoutUser.pending, (state) => {
-         // Можно установить статус loading, но очистка происходит синхронно
          // state.status = 'loading';
       });
-      // fulfilled/rejected обрабатываются через dispatch(logout())
   },
 });
 
-export const { logout } = authSlice.actions; // Экспортируем синхронный logout
+export const { logout } = authSlice.actions;
 export const selectUser = (state) => state.auth.user;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectAuthStatus = (state) => state.auth.status;

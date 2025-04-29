@@ -1,29 +1,9 @@
-/* HomePage.module.css */
-
 .homeContainer {
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
-  color: var(--text-primary);
-  background-color: var(--bg-primary);
-  min-height: 100vh;
-  /* Remove any bottom margin or padding that might be causing overflow */
-  margin-bottom: 0;
-  /* Fix the container height to prevent scrolling */
-  box-sizing: border-box;
-}
-
-/* Add this to ensure the page background extends to the full height */
-body, #root {
-  background-color: var(--bg-primary);
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
-/* Fix any elements that might be causing the white rectangles */
-.boardItem:last-child {
-  margin-bottom: 0;
+  color: var(--text-primary); /* Already using variable */
+  background-color: var(--bg-primary); /* Already using variable */
 }
 
 .boardsList {
@@ -38,22 +18,23 @@ body, #root {
   align-items: center;
   padding: 1rem;
   margin-bottom: 0.5rem;
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-card); /* Use variable */
   border-radius: 8px;
-  box-shadow: 0 1px 3px var(--shadow-color);
-  border: 1px solid var(--border-color);
-  transition: box-shadow 0.2s ease;
+  box-shadow: 0 1px 3px var(--shadow-color); /* Use variable */
+  border: 1px solid var(--border-color); /* Use variable */
+  transition: box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease; /* Add transitions */
 }
 
 .boardItem:hover {
-  box-shadow: 0 3px 6px var(--shadow-color);
+  box-shadow: 0 3px 6px var(--shadow-color); /* Use variable */
 }
 
 .boardLink {
   font-weight: 600;
   text-decoration: none;
-  color: var(--text-primary);
+  color: var(--text-primary); /* Use variable */
   flex-grow: 1;
+  transition: color 0.2s ease;
 }
 
 .boardActions {
@@ -61,44 +42,49 @@ body, #root {
   gap: 0.5rem;
 }
 
+/* Use general button styles from index.css or define specific ones with variables */
 .editBoardBtn {
+  /* Example using variables - adjust as needed */
   padding: 0.4rem 0.6rem;
   font-size: 0.8rem;
-  background-color: var(--button-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary); /* Use variable */
+  color: var(--text-secondary); /* Use variable */
+  border: 1px solid var(--border-color); /* Use variable */
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .editBoardBtn:hover {
-  background-color: var(--button-hover);
+  background-color: var(--button-hover, #e4e6ea); /* Use variable or fallback */
+  border-color: var(--border-color); /* Adjust if needed */
 }
 
 .deleteBoardBtn {
+  /* Example using variables */
   padding: 0.4rem 0.6rem;
   font-size: 0.8rem;
-  background-color: var(--danger-bg);
-  color: var(--danger-text);
-  border: 1px solid var(--danger-border);
+  background-color: var(--error-bg); /* Use variable */
+  color: var(--error-color); /* Use variable */
+  border: 1px solid var(--error-border, #ffbebe); /* Use variable or fallback */
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .deleteBoardBtn:hover {
-  background-color: var(--danger-bg);
-  filter: brightness(1.1);
+  background-color: var(--error-hover-bg, #fecaca); /* Use variable or fallback */
+  border-color: var(--error-hover-border, #e53e3e); /* Use variable or fallback */
 }
 
 .createBoardForm {
   margin-bottom: 2rem;
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-card); /* Use variable */
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 1px 3px var(--shadow-color);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px var(--shadow-color); /* Use variable */
+  border: 1px solid var(--border-color); /* Use variable */
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .createBoardForm form {
@@ -109,51 +95,50 @@ body, #root {
 .createBoardForm input {
   flex-grow: 1;
   padding: 0.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color); /* Use variable */
   border-radius: 4px;
   font-size: 14px;
-  height: 56px;
-  box-sizing: border-box;
-  background-color: var(--form-bg);
-  color: var(--text-primary);
-}
-
-.createBoardForm button {
-  padding: 0.5rem 1rem;
-  height: 56px;
-  box-sizing: border-box;
-  white-space: nowrap;
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.createBoardForm button:hover:not(:disabled) {
-  background-color: var(--accent-hover);
+  background-color: var(--bg-primary); /* Use variable */
+  color: var(--text-primary); /* Use variable */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .createBoardForm input:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px var(--focus-ring);
+  border-color: var(--accent-color); /* Use variable */
+  box-shadow: 0 0 0 2px var(--accent-focus-shadow, rgba(0, 121, 191, 0.2)); /* Use variable or fallback */
   outline: none;
 }
 
+/* Use the global button styles defined in index.css for the create button if applicable */
+/* Or style specifically using variables */
+.createBoardForm button {
+   /* Inherits from index.css button or add specific styles */
+   background-color: var(--accent-color);
+   color: var(--primary-button-text, white);
+   border: none;
+}
+.createBoardForm button:hover:not(:disabled) {
+   background-color: var(--accent-hover);
+}
+.createBoardForm button:disabled {
+   background-color: var(--accent-color);
+   opacity: 0.6;
+}
+
+
 .errorMessage {
-  background-color: var(--danger-bg);
-  color: var(--danger-text);
+  background-color: var(--error-bg); /* Use variable */
+  color: var(--error-color); /* Use variable */
   padding: 0.8rem;
   margin-bottom: 1rem;
   border-radius: 4px;
-  border: 1px solid var(--danger-border);
+  border: 1px solid var(--error-border, #f87171); /* Use variable or fallback */
 }
 
 .loading {
   text-align: center;
   margin: 2rem 0;
-  color: var(--text-secondary);
+  color: var(--text-secondary); /* Use variable */
 }
 
 .boardHeader {
@@ -173,11 +158,11 @@ body, #root {
   width: 100%;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color); /* Use variable */
   border-radius: 4px;
   font-size: 14px;
-  background-color: var(--form-bg);
-  color: var(--text-primary);
+  background-color: var(--bg-primary); /* Use variable */
+  color: var(--text-primary); /* Use variable */
 }
 
 .formButtons {
@@ -191,26 +176,26 @@ body, #root {
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease; /* Add color transition */
+  border: none; /* Remove default border if using background */
 }
 
 .formButtons button[type="submit"] {
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
+  background-color: var(--accent-color); /* Use variable */
+  color: var(--primary-button-text, white); /* Use variable or fallback */
 }
 
 .formButtons button[type="submit"]:hover:not(:disabled) {
-  background-color: var(--accent-hover);
+  background-color: var(--accent-hover); /* Use variable */
 }
 
 .formButtons button[type="button"] {
-  background-color: var(--button-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  background-color: var(--bg-secondary); /* Use variable */
+  color: var(--text-secondary); /* Use variable */
+  border: 1px solid var(--border-color); /* Add border for secondary */
 }
 
 .formButtons button[type="button"]:hover {
-  background-color: var(--button-hover);
-  color: var(--text-primary);
+  background-color: var(--button-hover, rgba(9, 30, 66, 0.08)); /* Use variable or fallback */
+  color: var(--text-primary); /* Use variable */
 }

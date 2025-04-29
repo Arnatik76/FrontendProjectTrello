@@ -22,7 +22,6 @@ function LoginForm() {
       navigate('/');
     } catch (err) {
       console.error('Login failed:', err);
-      // No need to set local state for errors as Redux handles it
     }
   };
 

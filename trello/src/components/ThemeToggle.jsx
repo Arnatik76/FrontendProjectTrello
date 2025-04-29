@@ -3,7 +3,8 @@ import styles from './ThemeToggle.module.css';
 
 function ThemeToggle() {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'light';
+    return localStorage.getItem('theme') || 
+           (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
   
   useEffect(() => {
@@ -18,7 +19,7 @@ function ThemeToggle() {
   return (
     <button 
       onClick={toggleTheme} 
-      className={`${styles.themeToggle} ${theme === 'dark' ? styles.darkTheme : ''}`}
+      className={styles.themeToggle}
       aria-label="Toggle theme"
     >
       {theme === 'light' ? '🌙' : '☀️'}

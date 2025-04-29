@@ -1,45 +1,24 @@
-:root {
-  --board-bg: #f9fafc;
-  --board-dark-bg: #1d2125;
-  --header-bg: rgba(255, 255, 255, 0.8);
-  --header-dark-bg: rgba(0, 0, 0, 0.2);
-  --header-border: #e1e4e8;
-  --header-box-shadow: rgba(9, 30, 66, 0.08);
-  --text-primary: #172b4d;
-  --text-secondary: #5e6c84;
-  --text-primary-dark: #e9eaed;
-  --text-secondary-dark: #9fadbc;
-  --btn-primary: #0079bf;
-  --btn-primary-hover: #026aa7;
-  --btn-primary-text: #ffffff;
-  --btn-secondary: rgba(9, 30, 66, 0.04);
-  --btn-secondary-hover: rgba(9, 30, 66, 0.08);
-  --error-bg: #fee2e2;
-  --error-border: #f87171;
-  --error-text: #b91c1c;
-}
-
 .boardContainer {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: var(--board-bg);
+  background-color: var(--bg-primary);
   overflow: hidden;
+  transition: background-color 0.2s ease;
 }
 
-/* Board header with navigation and actions */
 .boardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background-color: var(--header-bg);
-  border-bottom: 1px solid var(--header-border);
-  box-shadow: 0 1px 3px var(--header-box-shadow);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px var(--shadow-color);
   position: sticky;
   top: 0;
   z-index: 10;
-  backdrop-filter: blur(8px);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .boardTitle {
@@ -53,18 +32,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 0 16px;
+  transition: color 0.2s ease;
 }
 
 .backButton {
   padding: 8px 12px;
   border-radius: 4px;
-  background-color: var(--btn-secondary);
+  background-color: var(--bg-card);
   color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
   font-size: 14px;
-  transition: background-color 0.2s ease;
-  border: none;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -76,8 +56,9 @@
 }
 
 .backButton:hover {
-  background-color: var(--btn-secondary-hover);
+  background-color: var(--button-hover, #e4e6ea);
   color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 .headerActions {
@@ -89,9 +70,9 @@
 .refreshButton {
   padding: 8px 12px;
   border-radius: 4px;
-  background-color: var(--btn-secondary);
+  background-color: var(--bg-card);
   color: var(--text-secondary);
-  border: none;
+  border: 1px solid var(--border-color);
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;
@@ -102,7 +83,7 @@
 }
 
 .refreshButton:hover:not(:disabled) {
-  background-color: var(--btn-secondary-hover);
+  background-color: var(--button-hover, #e4e6ea);
   color: var(--text-primary);
 }
 
@@ -111,61 +92,59 @@
   cursor: not-allowed;
 }
 
-/* Board content area */
 .boardContent {
-  display: flex;
-  flex-grow: 1;
-  padding: 16px;
+  display: flex; /* Или grid */
   overflow-x: auto;
-  overflow-y: hidden;
-  align-items: flex-start;
-  height: calc(100vh - 60px);
+  padding: 1rem; /* Или другие отступы */
+  gap: 1rem; /* <--- Убедись, что это свойство есть и имеет нужное значение */
+  /* ... другие стили ... */
 }
 
-/* Scrollbar styling for the board content */
 .boardContent::-webkit-scrollbar {
   height: 12px;
 }
 
 .boardContent::-webkit-scrollbar-track {
-  background: rgba(9, 30, 66, 0.05);
+  background: var(--bg-secondary);
   border-radius: 12px;
 }
 
 .boardContent::-webkit-scrollbar-thumb {
-  background: rgba(9, 30, 66, 0.2);
+  background: var(--text-secondary);
+  opacity: 0.5;
   border-radius: 12px;
-  border: 3px solid var(--board-bg);
+  border: 3px solid var(--bg-primary);
 }
 
 .boardContent::-webkit-scrollbar-thumb:hover {
-  background: rgba(9, 30, 66, 0.3);
+  opacity: 0.7;
 }
 
-/* Add column form */
 .addColumnForm {
   width: 280px;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 12px;
   padding: 12px;
-  box-shadow: 0 1px 3px rgba(9, 30, 66, 0.2);
+  box-shadow: 0 1px 3px var(--shadow-color);
   margin-right: 16px;
   height: fit-content;
-  border: 1px solid var(--header-border);
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .addColumnForm input {
   width: 100%;
   padding: 8px;
-  border: 2px solid var(--btn-primary);
-  border-radius: 4px;
+  border: 2px solid var(--accent-color);
   margin-bottom: 8px;
   font-size: 14px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .addColumnForm input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
+  box-shadow: 0 0 0 2px var(--accent-focus-shadow, rgba(0, 121, 191, 0.2));
 }
 
 .formButtons {
@@ -184,40 +163,44 @@
 }
 
 .formButtons button[type="submit"] {
-  background-color: var(--btn-primary);
-  color: var(--btn-primary-text);
+  background-color: var(--accent-color);
+  color: var(--primary-button-text, white);
 }
 
 .formButtons button[type="submit"]:hover:not(:disabled) {
-  background-color: var(--btn-primary-hover);
+  background-color: var(--accent-hover);
 }
 
 .formButtons button[type="submit"]:disabled {
-  background-color: rgba(0, 121, 191, 0.5);
+  background-color: var(--accent-color);
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .formButtons button[type="button"] {
-  background-color: var(--btn-secondary);
-  color: var(--text-secondary);
+  background-color: var(--bg-secondary); /* Use variable */
+  color: var(--text-secondary); /* Use variable */
+  border: 1px solid var(--border-color); /* Add border */
 }
 
 .formButtons button[type="button"]:hover:not(:disabled) {
-  background-color: var(--btn-secondary-hover);
-  color: var(--text-primary);
+  background-color: var(--button-hover, #e4e6ea); /* Use variable or fallback */
+  color: var(--text-primary); /* Use variable */
 }
 
 /* Add column button */
 .addColumn {
   min-width: 280px;
   height: fit-content;
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .addColumnButton {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px dashed var(--header-border);
+  background-color: var(--bg-secondary); /* Use variable */
+  opacity: 0.8;
+  border: 1px dashed var(--border-color); /* Use variable */
   border-radius: 12px;
-  color: var(--text-secondary);
+  color: var(--text-secondary); /* Use variable */
   cursor: pointer;
   font-weight: 500;
   padding: 12px 16px;
@@ -227,10 +210,11 @@
 }
 
 .addColumnButton:hover:not(:disabled) {
-  background-color: #ffffff;
-  border-color: var(--btn-primary);
-  color: var(--btn-primary);
-  box-shadow: 0 2px 4px rgba(9, 30, 66, 0.1);
+  background-color: var(--bg-card); /* Use variable */
+  border-color: var(--accent-color); /* Use variable */
+  color: var(--accent-color); /* Use variable */
+  box-shadow: 0 2px 4px var(--shadow-color); /* Use variable */
+  opacity: 1;
 }
 
 .addColumnButton:disabled {
@@ -245,14 +229,14 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: var(--board-bg);
+  background-color: var(--bg-primary); /* Use variable */
   padding: 24px;
 }
 
 .errorMessage {
-  background-color: var(--error-bg);
-  border: 1px solid var(--error-border);
-  color: var(--error-text);
+  background-color: var(--error-bg); /* Use variable */
+  border: 1px solid var(--error-border, #f87171); /* Use variable or fallback */
+  color: var(--error-color); /* Use variable */
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -267,51 +251,12 @@
   align-items: center;
   height: 100px;
   font-weight: 500;
-  color: var(--text-secondary);
-  background-color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary); /* Use variable */
+  background-color: var(--bg-secondary); /* Use variable */
   border-radius: 8px;
   min-width: 280px;
-  margin-right: 16px;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .boardContainer {
-    background-color: var(--board-dark-bg);
-  }
-  
-  .boardHeader {
-    background-color: var(--header-dark-bg);
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .boardTitle {
-    color: var(--text-primary-dark);
-  }
-  
-  .addColumnButton {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: var(--text-secondary-dark);
-  }
-  
-  .addColumnButton:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-color: var(--btn-primary);
-  }
-  
-  .boardContent::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-  }
-  
-  .boardContent::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border: 3px solid var(--board-dark-bg);
-  }
-  
-  .boardContent::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
+  margin-right: 16px; /* Keep margin if needed */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 /* Responsive adjustments */
@@ -320,16 +265,24 @@
     padding: 8px 12px;
     flex-wrap: wrap;
   }
-  
+
   .boardTitle {
     font-size: 18px;
     width: 100%;
-    order: -1;
+    order: -1; /* Move title to top on small screens */
     text-align: left;
     margin-bottom: 8px;
+    padding: 0; /* Remove extra padding */
   }
-  
+
   .boardContent {
     padding: 12px 8px;
+    /* Ensure vertical scrolling works if needed, though horizontal is primary */
+    /* height: calc(100vh - header_height); */
+  }
+
+  .addColumn, .addColumnForm {
+     min-width: 250px; /* Slightly smaller columns on mobile */
+     margin-right: 12px;
   }
 }

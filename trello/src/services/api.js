@@ -5,17 +5,15 @@ const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // <-- ДОБАВИТЬ ЭТУ СТРОКУ
+  withCredentials: true,
 });
 
 const handleApiError = (error) => {
   const status = error.response?.status || 500;
   let message = error.response?.data?.message || error.message || 'Something went wrong';
 
-  // Если бэкенд при неавторизованном доступе возвращает 401 или 403
   if (status === 401 || status === 403) {
      message = error.response?.data?.message || 'You are not authorized for this action.';
-     // Можно добавить логику для редиректа на логин, если сессия истекла
      // window.location.href = '/login';
   } else if (status === 404) {
     message = error.response?.data?.message || 'The requested resource was not found';

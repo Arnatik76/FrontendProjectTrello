@@ -2,15 +2,14 @@
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-card); /* Use variable */
   border-radius: 8px;
-  box-shadow: 0 4px 12px var(--shadow-color);
-  border: 1px solid var(--border-color);
-  position: relative;
-  color: var(--text-primary);
+  box-shadow: 0 4px 12px var(--shadow-color); /* Use variable */
+  border: 1px solid var(--border-color); /* Use variable */
+  position: relative; /* Added for positioning the toggle */
 }
 
-/* Add this new style for the theme toggle positioning */
+/* Added wrapper for positioning */
 .themeToggleWrapper {
   position: absolute;
   top: 1rem;
@@ -20,7 +19,7 @@
 .authContainer h2 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: var(--text-primary);
+  color: var(--text-primary); /* Use variable */
 }
 
 .authForm {
@@ -37,29 +36,29 @@
 
 .formGroup label {
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-secondary); /* Use variable */
   font-size: 0.9rem;
 }
 
 .formGroup input {
   padding: 0.75rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color); /* Use variable */
   border-radius: 4px;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
-  background-color: var(--form-bg);
-  color: var(--text-primary);
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease; /* Add transitions */
+  background-color: var(--bg-primary); /* Use variable */
+  color: var(--text-primary); /* Use variable */
 }
 
 .formGroup input:focus {
   outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px var(--focus-ring);
+  border-color: var(--accent-color); /* Use variable */
+  box-shadow: 0 0 0 2px var(--accent-focus-shadow, rgba(0, 121, 191, 0.2)); /* Use variable or fallback */
 }
 
 .authForm button {
-  background-color: #0079bf;
-  color: white;
+  background-color: var(--accent-color); /* Use variable */
+  color: var(--primary-button-text, white); /* Use variable or fallback */
   padding: 0.75rem;
   border: none;
   border-radius: 4px;
@@ -71,36 +70,38 @@
 }
 
 .authForm button:hover:not(:disabled) {
-  background-color: #026aa7;
+  background-color: var(--accent-hover); /* Use variable */
 }
 
 .authForm button:disabled {
-  background-color: rgba(0, 121, 191, 0.5);
+  background-color: var(--accent-color); /* Use variable */
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
 .authContainer p {
   text-align: center;
   margin-top: 1.5rem;
-  color: #5e6c84;
+  color: var(--text-secondary); /* Use variable */
 }
 
 .authContainer a {
-  color: #0079bf;
+  color: var(--accent-color); /* Use variable */
   text-decoration: none;
   font-weight: 500;
 }
 
 .authContainer a:hover {
   text-decoration: underline;
+  color: var(--accent-hover); /* Use variable */
 }
 
 .errorMessage {
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: var(--error-bg); /* Use variable */
+  color: var(--error-color); /* Use variable */
   padding: 0.8rem;
   margin-bottom: 0.5rem;
   border-radius: 4px;
-  border: 1px solid #f87171;
+  border: 1px solid var(--error-border, #f87171); /* Use variable or fallback */
   font-size: 0.9rem;
 }

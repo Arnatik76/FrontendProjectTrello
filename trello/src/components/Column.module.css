@@ -1,44 +1,31 @@
 /* filepath: c:\Users\Arnat\Documents\GitHub\FrontendProjectTrello\trello\src\components\Column.module.css */
-:root {
-  --column-width: 280px;
-  --column-bg: #f1f2f4;
-  --column-border: #dfe1e6;
-  --column-shadow: rgba(9, 30, 66, 0.13);
-  --column-header-bg: #ebecf0;
-  --title-color: #172b4d;
-  --text-secondary: #5e6c84;
-  --add-button-hover: rgba(9, 30, 66, 0.08);
-  --primary-button: #0079bf;
-  --primary-button-hover: #026aa7;
-  --primary-button-text: #fff;
-  --form-shadow: rgba(9, 30, 66, 0.25);
-  --card-hover: rgba(9, 30, 66, 0.04);
-}
-
 .column {
-  width: var(--column-width);
-  background-color: var(--column-bg);
+  width: 280px; /* Consider using a variable if needed elsewhere */
+  background-color: var(--bg-secondary); /* Use variable */
   border-radius: 12px;
-  margin-right: 16px;
+  /* margin-right: 16px; Use gap in parent (.boardContent) instead */
   display: flex;
   flex-direction: column;
   min-height: 120px;
-  max-height: fit-content;
-  box-shadow: 0 2px 4px var(--column-shadow);
-  border: 1px solid var(--column-border);
-  transition: box-shadow 0.15s ease;
+  max-height: fit-content; /* Adjust as needed, maybe max-height: calc(100vh - ...)? */
+  box-shadow: 0 1px 3px var(--shadow-color); /* Use variable */
+  border: 1px solid var(--border-color); /* Use variable */
+  transition: box-shadow 0.15s ease, background-color 0.2s ease, border-color 0.2s ease; /* Add transitions */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .column:hover {
-  box-shadow: 0 4px 8px var(--column-shadow);
+  box-shadow: 0 3px 6px var(--shadow-color); /* Use variable */
 }
 
 .columnHeader {
   padding: 12px 16px;
-  background-color: var(--column-header-bg);
-  border-bottom: 1px solid var(--column-border);
+  /* background-color: var(--column-header-bg); Use bg-secondary or bg-card? */
+  background-color: var(--bg-card); /* Using card background for header */
+  border-bottom: 1px solid var(--border-color); /* Use variable */
   border-radius: 12px 12px 0 0;
   position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease; /* Add transitions */
 }
 
 .columnTitleContainer {
@@ -51,28 +38,26 @@
 .columnTitle {
   font-weight: 600;
   font-size: 15px;
-  color: var(--title-color);
+  color: var(--text-primary); /* Use variable */
   cursor: pointer;
   flex-grow: 1;
   margin-right: 8px;
   word-break: break-word;
   padding: 4px;
   border-radius: 4px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease; /* Add transitions */
 }
 
 .columnTitle:hover {
-  background-color: rgba(9, 30, 66, 0.04);
+  background-color: var(--button-hover, rgba(9, 30, 66, 0.04)); /* Use variable or fallback */
 }
 
 .columnActions {
   display: flex;
   gap: 8px;
-  /* Remove opacity: 0 to always show buttons */
   transition: opacity 0.2s ease;
 }
 
-/* Make buttons visually subtle by default, but clearly visible */
 .editColumnBtn,
 .deleteColumnBtn {
   background: none;
@@ -80,22 +65,21 @@
   cursor: pointer;
   padding: 6px;
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary); /* Use variable */
   border-radius: 4px;
   transition: all 0.2s ease;
-  opacity: 0.7; /* Slightly faded by default */
+  opacity: 0.7;
 }
 
-/* Emphasize buttons on hover */
 .editColumnBtn:hover,
 .deleteColumnBtn:hover {
-  background-color: rgba(9, 30, 66, 0.08);
-  color: var(--title-color);
+  background-color: var(--button-hover, rgba(9, 30, 66, 0.08)); /* Use variable or fallback */
+  color: var(--text-primary); /* Use variable */
   opacity: 1;
 }
 
 .deleteColumnBtn:hover {
-  color: #c92a2a;
+  color: var(--error-color); /* Use variable */
 }
 
 .columnCards {
@@ -103,11 +87,35 @@
   overflow-y: auto;
   flex-grow: 1;
   min-height: 50px;
-  max-height: 70vh;
+  /* Consider a max-height based on viewport minus header/footer */
+  max-height: calc(100vh - 200px); /* Example: Adjust as needed */
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+
+/* Scrollbar styling for column cards */
+.columnCards::-webkit-scrollbar {
+  width: 8px;
+}
+
+.columnCards::-webkit-scrollbar-track {
+  background: transparent; /* Make track transparent */
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.columnCards::-webkit-scrollbar-thumb {
+  background: var(--text-secondary); /* Use variable */
+  opacity: 0.4;
+  border-radius: 8px;
+  border: 2px solid var(--bg-secondary); /* Use column background */
+}
+
+.columnCards::-webkit-scrollbar-thumb:hover {
+  opacity: 0.6;
+}
+
 
 .columnHeader form {
   display: flex;
@@ -118,11 +126,17 @@
 .columnHeader form input {
   margin-bottom: 8px;
   padding: 8px;
-  border: 2px solid var(--primary-button);
+  border: 2px solid var(--accent-color); /* Use variable */
   border-radius: 4px;
   font-size: 15px;
   font-weight: 500;
-  box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
+  box-shadow: 0 0 0 2px var(--accent-focus-shadow, rgba(0, 121, 191, 0.2)); /* Use variable or fallback */
+  background-color: var(--bg-primary); /* Use variable */
+  color: var(--text-primary); /* Use variable */
+}
+
+.columnHeader form input:focus {
+  outline: none;
 }
 
 .formButtons {
@@ -135,33 +149,34 @@
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease; /* Add color transition */
 }
 
 .formButtons button[type="submit"] {
-  background-color: var(--primary-button);
-  color: var(--primary-button-text);
+  background-color: var(--accent-color); /* Use variable */
+  color: var(--primary-button-text, white); /* Use variable or fallback */
   border: none;
 }
 
 .formButtons button[type="submit"]:hover:not(:disabled) {
-  background-color: var(--primary-button-hover);
+  background-color: var(--accent-hover); /* Use variable */
 }
 
 .formButtons button[type="submit"]:disabled {
-  background-color: rgba(0, 121, 191, 0.5);
+  background-color: var(--accent-color); /* Use variable */
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .formButtons button[type="button"] {
-  background-color: rgba(9, 30, 66, 0.04);
-  border: none;
-  color: var(--text-secondary);
+  background-color: var(--bg-secondary); /* Use variable */
+  border: 1px solid var(--border-color); /* Use variable */
+  color: var(--text-secondary); /* Use variable */
 }
 
 .formButtons button[type="button"]:hover {
-  background-color: rgba(9, 30, 66, 0.08);
-  color: var(--title-color);
+  background-color: var(--button-hover, rgba(9, 30, 66, 0.08)); /* Use variable or fallback */
+  color: var(--text-primary); /* Use variable */
 }
 
 .addTaskForm {
@@ -172,29 +187,32 @@
   width: 100%;
   margin-bottom: 8px;
   min-height: 60px;
-  border: 1px solid var(--column-border);
+  border: 1px solid var(--border-color); /* Use variable */
   border-radius: 4px;
   padding: 8px;
   resize: vertical;
   font-family: inherit;
-  box-shadow: 0 1px 2px var(--column-shadow);
+  box-shadow: 0 1px 2px var(--shadow-color); /* Use variable */
+  background-color: var(--bg-primary); /* Use variable */
+  color: var(--text-primary); /* Use variable */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Add transitions */
 }
 
 .addTaskForm textarea:focus {
-  border-color: var(--primary-button);
-  box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
+  border-color: var(--accent-color); /* Use variable */
+  box-shadow: 0 0 0 2px var(--accent-focus-shadow, rgba(0, 121, 191, 0.2)); /* Use variable or fallback */
   outline: none;
 }
 
 .addCardButton {
   background-color: transparent;
   border: none;
-  color: var(--text-secondary);
+  color: var(--text-secondary); /* Use variable */
   padding: 10px 12px;
   text-align: left;
   cursor: pointer;
   border-radius: 0 0 12px 12px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease; /* Add color transition */
   margin: 4px 8px 8px 8px;
   font-weight: 500;
   display: flex;
@@ -210,12 +228,12 @@
 }
 
 .addCardButton:hover {
-  background-color: var(--add-button-hover);
-  color: var(--title-color);
+  background-color: var(--button-hover, rgba(9, 30, 66, 0.08)); /* Use variable or fallback */
+  color: var(--text-primary); /* Use variable */
 }
 
 .addCardButton:disabled {
-  color: rgba(94, 108, 132, 0.5);
+  color: rgba(var(--text-secondary-rgb, 94, 108, 132), 0.5); /* Use variable or fallback with opacity */
   cursor: not-allowed;
   background-color: transparent;
 }
@@ -224,44 +242,35 @@
 .columnCards:empty::after {
   content: 'No cards yet';
   display: block;
-  color: var(--text-secondary);
+  color: var(--text-secondary); /* Use variable */
   padding: 16px 8px;
   text-align: center;
   font-style: italic;
-  border: 2px dashed rgba(9, 30, 66, 0.08);
+  border: 2px dashed var(--border-color); /* Use variable */
   border-radius: 4px;
   margin: 8px 0;
 }
 
 /* Drop area styling */
-.columnCards > div[style*="backgroundColor: rgba(0,0,0,0.1)"] {
-  background-color: rgba(0, 121, 191, 0.1) !important;
-  border: 2px dashed rgba(0, 121, 191, 0.4) !important;
-  border-radius: 6px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: var(--text-secondary) !important;
-  font-style: italic !important;
+.dropTarget {
+  /* Subtle indication that it's a drop target */
+  background-color: rgba(var(--accent-color-rgb, 37, 99, 235), 0.1); /* Use variable or fallback with opacity */
 }
 
 .dragging {
   opacity: 0.5 !important;
-}
-
-.dropTarget {
-  background-color: rgba(0, 255, 0, 0.1);
+  transform: rotate(3deg); /* Slight rotation effect */
 }
 
 .dropPlaceholder {
   height: 50px;
-  background-color: rgba(0, 121, 191, 0.1);
+  background-color: rgba(var(--accent-color-rgb, 37, 99, 235), 0.1); /* Use variable or fallback with opacity */
   margin: 0.5rem;
   border-radius: 4px;
-  border: 2px dashed rgba(0, 121, 191, 0.4);
+  border: 2px dashed var(--accent-color); /* Use variable */
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
+  color: var(--text-secondary); /* Use variable */
   font-style: italic;
 }

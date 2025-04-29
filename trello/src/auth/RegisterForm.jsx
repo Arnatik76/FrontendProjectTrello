@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser, selectAuthStatus, selectAuthError } from '../store/slices/authSlice';
-import ThemeToggle from '../components/ThemeToggle'; // Add this import
+import ThemeToggle from '../components/ThemeToggle';
 import styles from './Auth.module.css';
 
 function RegisterForm() {

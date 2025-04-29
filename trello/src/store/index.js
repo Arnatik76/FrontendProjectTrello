@@ -2,11 +2,11 @@ import { configureStore } from '@reduxjs/toolkit';
 import boardsReducer from './slices/boardsSlice';
 import columnsReducer from './slices/columnsSlice';
 import tasksReducer from './slices/tasksSlice';
-import authReducer from './slices/authSlice'; // Импорт нового редьюсера
+import authReducer from './slices/authSlice';
 
 const store = configureStore({
   reducer: {
-    auth: authReducer, // Добавляем редьюсер аутентификации
+    auth: authReducer, 
     boards: boardsReducer,
     columns: columnsReducer,
     tasks: tasksReducer,

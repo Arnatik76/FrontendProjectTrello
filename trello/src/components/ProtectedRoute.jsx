@@ -23,7 +23,7 @@ const ProtectedRoute = () => {
   }
 
   console.log('ProtectedRoute - Authenticated, rendering children');
-  return <Outlet />; // Используем Outlet вместо children для рендеринга вложенных маршрутов
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

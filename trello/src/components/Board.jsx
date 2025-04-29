@@ -5,7 +5,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Column from "./Column";
 import ThemeToggle from "./ThemeToggle";
-import styles from './Board.module.css'; // Import CSS module
+import styles from './Board.module.css';
 import {
   fetchBoardById
 } from "../store/slices/boardsSlice";
