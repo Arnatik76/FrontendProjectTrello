@@ -113,7 +113,8 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload;
+        // Make sure the error is correctly formatted
+        state.error = action.payload?.message || action.payload || action.error.message || 'Authentication failed';
         state.user = null;
         state.isAuthenticated = false;
       })
