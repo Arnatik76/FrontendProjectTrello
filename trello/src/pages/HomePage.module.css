@@ -7,6 +7,23 @@
   color: var(--text-primary);
   background-color: var(--bg-primary);
   min-height: 100vh;
+  /* Remove any bottom margin or padding that might be causing overflow */
+  margin-bottom: 0;
+  /* Fix the container height to prevent scrolling */
+  box-sizing: border-box;
+}
+
+/* Add this to ensure the page background extends to the full height */
+body, #root {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Fix any elements that might be causing the white rectangles */
+.boardItem:last-child {
+  margin-bottom: 0;
 }
 
 .boardsList {
@@ -115,7 +132,7 @@
 }
 
 .createBoardForm button:hover:not(:disabled) {
-  background-color: var(--hover-accent);
+  background-color: var(--accent-hover);
 }
 
 .createBoardForm input:focus {
@@ -184,7 +201,7 @@
 }
 
 .formButtons button[type="submit"]:hover:not(:disabled) {
-  background-color: var(--hover-accent);
+  background-color: var(--accent-hover);
 }
 
 .formButtons button[type="button"] {
