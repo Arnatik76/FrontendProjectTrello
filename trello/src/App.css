@@ -32,6 +32,7 @@ body {
   --danger-bg: #fee2e2;
   --danger-text: #b91c1c;
   --button-hover: #d1d5db;
+  --accent-hover: #4a51d3;
   
   --button-bg: #f1f2f4;
 }
@@ -45,6 +46,7 @@ body {
   --text-secondary: #d1d5db;
   --border-color: #4b5563;
   --accent-color: #818cf8;
+  --accent-hover: #4a51d3;
   --shadow-color: rgba(0, 0, 0, 0.4);
   --danger-bg: #7f1d1d;
   --danger-text: #fecaca;
